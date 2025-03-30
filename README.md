@@ -1,0 +1,2 @@
+# dns-tester
+DNS tester
