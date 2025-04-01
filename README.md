@@ -14,7 +14,7 @@ This project provides a scalable solution for testing multiple DNS servers async
 
 ## Features
 
-- Asynchronous execution of DNS tests using `[q](https://github.com/natesales/q)`
+- Asynchronous execution of DNS tests using `[https://github.com/natesales/q](q)`
 - Configurable concurrency level for parallel processing
 - Task status tracking and result retrieval
 - API documentation with Swagger UI
@@ -46,7 +46,8 @@ curl -X POST http://localhost:5000/dns-lookup \
   -d '{
         "domain": "example.com", 
         "dns_servers": ["udp://8.8.8.8:53", "tls://1.1.1.1:853"], 
-        "qtype": "A"
+        "qtype": "A",
+        "tls_insecure_skip_verify": false
       }'
 
 ```
@@ -68,24 +69,41 @@ curl http://localhost:5000/task/a19e8aed-68b5-4639-ab21-f65caf8482ac
 Response:
 ```json
 {
-  "task_id": "a19e8aed-68b5-4639-ab21-f65caf8482ac",
-  "status": "SUCCESS",
+  "task_id": "30949f79-c80f-41a5-8a93-754f260472ca",
+  "task_status": "SUCCESS",
   "result": {
     "udp://8.8.8.8:53": {
       "command_status": "ok",
-      "time_ms": 13.9,
-      "rcode": "NoError",
+      "time_ms": 13.452129,
+      "rcode": "NOERROR",
       "name": "example.com.",
       "qtype": "A",
       "answers": [
         {
           "name": "example.com.",
           "type": "A",
-          "ttl": 190,
-          "value": "93.184.216.34"
+          "ttl": 110,
+          "value": "23.192.228.80"
         }
-      ]
+      ],
+      "error": null
     },
+    "tls://1.1.1.1:853": {
+      "command_status": "ok",
+      "time_ms": 128.041827,
+      "rcode": "NOERROR",
+      "name": "example.com.",
+      "qtype": "A",
+      "answers": [
+        {
+          "name": "example.com.",
+          "type": "A",
+          "ttl": 193,
+          "value": "23.192.228.80"
+        }
+      ],
+      "error": null
+    }
   }
 }
 ```

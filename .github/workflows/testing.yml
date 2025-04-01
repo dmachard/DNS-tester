@@ -9,7 +9,7 @@ on:
       - main
       
 jobs:
-  publicaddr:
+  dns-tester:
     runs-on: ubuntu-latest
 
     strategy:
