@@ -1,25 +1,11 @@
 # DNS Tester with Async Queue
 
-A non-blocking API for testing DNS servers using Redis and Celery, 
-allowing parallel execution of dig commands with configurable concurrency.
-
-## Overview
-
 This project provides a scalable solution for testing multiple DNS servers asynchronously. It uses:
 - FastAPI for the REST API
 - Redis as a message broker
 - Celery for task queuing and execution
 - Prometheus metrics for real-time monitoring
 - Docker and Docker Compose for containerization
-
-## Features
-
-- Asynchronous execution of DNS tests using `[https://github.com/natesales/q](q)`
-- Configurable concurrency level for parallel processing
-- Task status tracking and result retrieval
-- API documentation with Swagger UI
-- Prometheus metrics for monitoring: DNS response time, total queries, failures, and more
-- Containerized deployment
 
 ## Installation
 
@@ -129,19 +115,4 @@ python3 -m venv venv
 source venv/bin/activate
 python -m pip install -r requirements.txt
 pytest tests/ -v
-```
-
-## Troubleshooting
-
-List stored keys:
-
-```bash
-$ sudo docker exec -it dns-tester-redis-1 redis-cli keys '*'
-2) "celery-task-meta-70b230d3-f8df-47f0-85e2-380d6b7f0254"
-```
-
-Retrieve task result:
-
-```bash
-$ sudo docker exec -it dns-tester-redis-1 redis-cli get celery-task-meta-70b230d3-f8df-47f0-85e2-380d6b7f0254
 ```
