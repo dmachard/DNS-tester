@@ -1,0 +1,35 @@
+services:
+  redis:
+    image: redis:7.4.2-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  api:
+    build: .
+    ports:
+      - "5000:5000"
+    env_file:
+      - example.env
+    depends_on:
+      - redis
+      - worker
+
+  worker:
+    build: .
+    env_file:
+      - example.env
+    depends_on:
+      - redis
+    command: sh -c "celery -A worker.lookup worker --loglevel=${CELERY_LOGLEVEL:-info} --concurrency=${CELERY_CONCURRENCY:-4}"
+
+volumes:
+  redis-data:
