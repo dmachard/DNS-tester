@@ -12,6 +12,7 @@ services:
       interval: 5s
       timeout: 3s
       retries: 5
+    restart: unless-stopped
 
   api:
     build: .
@@ -22,6 +23,8 @@ services:
     depends_on:
       - redis
       - worker
+    command: sh -c "uvicorn api.app:app --host ${UVICORN_HOST:-0.0.0.0} --port ${UVICORN_PORT:-5000} --workers ${UVICORN_WORKERS:-1}"
+    restart: unless-stopped
 
   worker:
     build: .
@@ -30,6 +33,7 @@ services:
     depends_on:
       - redis
     command: sh -c "celery -A worker.lookup worker --loglevel=${CELERY_LOGLEVEL:-info} --concurrency=${CELERY_CONCURRENCY:-4}"
+    restart: unless-stopped
 
 volumes:
   redis-data:
