@@ -76,7 +76,7 @@ def run_q(domain, qtype, dns_servers, tls_insecure_skip_verify):
                                     "type": TYPE_MAPPING.get(ans["hdr"]["rrtype"], "Unknown"),
                                     "ttl": ans["hdr"]["ttl"],
                                     "value": ans.get("a") or ans.get("aaaa") or ans.get("ptr") 
-                                        or ans.get("ns") or ans.get("cname") or ans.get("txt")
+                                        or ans.get("ns") or ans.get("target") or ans.get("txt")
                                         or ans.get("mx") or ans.get("soa") 
                                 })
                     
