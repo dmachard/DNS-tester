@@ -1,9 +1,8 @@
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, IPvAnyAddress
 from typing import List, Dict, Literal, Optional
 
 # List of allowed protocols
 ALLOWED_PROTOCOLS = ("udp://", "tcp://", "https://", "quic://", "tls://")
-
 class DNSServer(BaseModel):
     target: str = Field(..., description="DNS server target with protocol")
     description: Optional[str] = Field(None, description="Optional description of the DNS server")
@@ -14,6 +13,11 @@ class DNSServer(BaseModel):
         if not v.startswith(ALLOWED_PROTOCOLS):
             raise ValueError(f"DNS server target '{v}' must start with one of {ALLOWED_PROTOCOLS}.")
         return v
+
+class ReverseDNSLookup(BaseModel):
+    reverse_ip: IPvAnyAddress = Field(..., description="IP address to resolve via PTR")
+    dns_servers: Optional[List[DNSServer]] = Field(None, description="List of DNS servers to use")
+    tls_insecure_skip_verify: bool = Field(False, description="Skip TLS cert verification (for TLS-based queries)")
 
 class DNSLookup(BaseModel):
     domain: str = Field(..., description="Domain name to query")

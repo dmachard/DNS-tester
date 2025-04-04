@@ -40,6 +40,9 @@ def run_q(domain, qtype, dns_servers, tls_insecure_skip_verify):
             # Execute q command
             cmd = ["q", "--format=json", "@" + server_addr, domain, qtype]
 
+            if qtype == "PTR":
+                cmd.append("-x")
+
             # Usage HTTP2 for DoH
             if server["target"].startswith("https://"):
                 cmd.append("--http2")

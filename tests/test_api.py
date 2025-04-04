@@ -12,7 +12,7 @@ def test_health_check():
     assert response.json() == {"status": "ok"}
 
 @patch("worker.lookup.lookup_dns.delay", return_value=MagicMock(id="fake-task-id"))
-def test_post_dnslookup_get_taskid(mock_celery):
+def test_post_dnslookup_return_taskid(mock_celery):
     data = {
         "domain": "example.com",
         "dns_servers": [ {"target": "udp://8.8.8.8:53", "description": ""}, {"target": "tls://1.1.1.1:853", "description": ""}],
@@ -23,6 +23,18 @@ def test_post_dnslookup_get_taskid(mock_celery):
     assert response.status_code == 200
     assert response.json() == {"task_id": "fake-task-id", "message": "DNS lookup enqueued"}
     mock_celery.assert_called_once_with("example.com", "A", [{"target": "udp://8.8.8.8:53", "description": ""}, {"target": "tls://1.1.1.1:853", "description": ""}], False)
+
+@patch("worker.lookup.lookup_dns.delay", return_value=MagicMock(id="fake-task-id"))
+def test_post_reverselookup_return_taskid(mock_celery):
+    data = {
+        "reverse_ip": "1.1.1.1",
+        "dns_servers": [ {"target": "udp://8.8.8.8:53", "description": ""}]
+    }
+    response = client.post("/reverse-lookup", json=data)
+
+    assert response.status_code == 200
+    assert response.json() == {"task_id": "fake-task-id", "message": "Reverse DNS lookup enqueued"}
+    mock_celery.assert_called_once_with("1.1.1.1", "PTR", [{"target": "udp://8.8.8.8:53", "description": ""}], False)
 
 @pytest.mark.parametrize("valid_qtype", ["A", "AAAA", "CNAME", "PTR", "TXT"])
 @patch("worker.lookup.lookup_dns.delay", return_value=MagicMock(id="fake-task-id"))

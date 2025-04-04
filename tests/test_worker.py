@@ -21,6 +21,10 @@ MOCK_Q_SUCCESS_OUTPUT = b'''
                     {
                         "hdr": {"name": "example.com.", "rrtype": 1, "class": 1, "ttl": 300, "rdlength": 4},
                         "a": "93.184.216.34"
+                    },
+                    {
+                        "hdr": {"name": "example.com.", "rrtype": 5, "class": 1, "ttl": 300, "rdlength": 4},
+                        "target": "pointer.example.com."
                     }
                 ]
             }
@@ -54,7 +58,7 @@ def test_run_q_success(mock_popen):
 
     # Ensure there's at least one answer
     assert "answers" in server_result
-    assert len(server_result["answers"]) == 1
+    assert len(server_result["answers"]) == 2
 
      # Validate the DNS answer
     answer = server_result["answers"][0]
@@ -62,3 +66,9 @@ def test_run_q_success(mock_popen):
     assert answer["type"] == "A"
     assert answer["ttl"] == 300
     assert answer["value"] == "93.184.216.34"
+
+    answer = server_result["answers"][1]
+    assert answer["name"] == "example.com."
+    assert answer["type"] == "CNAME"
+    assert answer["ttl"] == 300
+    assert answer["value"] == "pointer.example.com."
