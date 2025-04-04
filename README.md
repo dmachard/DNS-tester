@@ -60,6 +60,7 @@ Response:
   "result": {
     "udp://8.8.8.8:53": {
       "command_status": "ok",
+      "description": "",
       "time_ms": 13.452129,
       "rcode": "NOERROR",
       "name": "example.com.",
@@ -76,6 +77,7 @@ Response:
     },
     "tls://1.1.1.1:853": {
       "command_status": "ok",
+      "description": "",
       "time_ms": 128.041827,
       "rcode": "NOERROR",
       "name": "example.com.",
