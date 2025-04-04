@@ -9,8 +9,7 @@ on:
       - main
 
 jobs:
-
-  python-package:
+  docker-image:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
