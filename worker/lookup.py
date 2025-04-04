@@ -1,6 +1,7 @@
 import os
 
 from celery import Celery
+from prometheus_client import generate_latest
 
 from worker.q import run_q
 from worker import celeryconfig
@@ -16,3 +17,7 @@ wrk.conf.broker_connection_retry_on_startup = True
 @wrk.task()
 def lookup_dns(domain, qtype, dns_servers, tls_insecure_skip_verify):
     return run_q(domain, qtype, dns_servers, tls_insecure_skip_verify)
+
+@wrk.task()
+def get_metrics():
+    return  generate_latest().decode('utf-8')

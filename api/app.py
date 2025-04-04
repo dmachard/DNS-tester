@@ -2,12 +2,12 @@ import os
 
 from fastapi import FastAPI
 from fastapi.responses import Response
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 
 from worker.lookup import lookup_dns as celery_lookup_dns
-from api.models import DNSLookup, DNSLookupStatus
-import api.prom 
+from worker.lookup import get_metrics as celery_get_metrics
 
-from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+from api.models import DNSLookup, DNSLookupStatus
 
 api_version = os.getenv('API_VERSION', '0.0.0')
 
@@ -35,31 +35,6 @@ async def get_task_status(task_id: str):
     elif task_result.state == 'FAILURE':
         return {"task_id": task_id, "task_status": "FAILURE", "error": str(task_result.result)}
     elif task_result.state == 'SUCCESS':
-        # Update Prometheus metrics
-        for server, result in task_result.result.items():
-            if 'command_status' in result and result["command_status"] == "ok" :
-                response_time_sec = result["time_ms"] / 1000  # Convert ms → seconds
-                
-                # Increment total queries count
-                api.prom.dns_total_queries.labels(server=server).inc()
-                
-                # Observe response time histogram
-                api.prom.dns_response_time.labels(server=server).observe(response_time_sec)
-                
-                # pdate latest response time
-                api.prom.dns_avg_response_time.labels(server=server).set(response_time_sec)
-                
-                # Increment query type count (A, AAAA, CNAME, etc.)
-                api.prom.dns_query_types_count.labels(qtype=result["qtype"]).inc()
-                
-                # Increment successful resolution count
-                if result["rcode"] == "NOERROR":
-                    api.prom.dns_noerror_count.labels(server=server).inc()
-                else:
-                    # Increment failed resolution count (NXDOMAIN, SERVFAIL...)
-                    api.prom.dns_failure_count.labels(server=server, rcode=result["rcode"]).inc()
-
-
         return {"task_id": task_id, "task_status": "SUCCESS", "result": task_result.result}
     else:
         return {"task_id": task_id, "task_status": task_result.state}
@@ -76,4 +51,5 @@ async def prom():
     """
     Expose Prometheus metrics.
     """
-    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
+    metrics_data = celery_get_metrics.delay().get(timeout=5)
+    return Response(metrics_data, media_type="text/plain")

@@ -1,6 +1,8 @@
 import subprocess
 import json
 
+import worker.metrics
+
 # Mapping des rcode et types DNS
 RCODE_MAPPING = {
     0: "NOERROR",
@@ -98,4 +100,29 @@ def run_q(domain, qtype, dns_servers, tls_insecure_skip_verify):
                 "error": str(e)
             }
     
+    # Update Prometheus metrics
+    for server, result in results.items():
+        if 'command_status' in result and result["command_status"] == "ok" :
+            response_time_sec = result["time_ms"] / 1000  # Convert ms → seconds
+            
+            # Increment total queries count
+            worker.metrics.dns_total_queries.labels(server=server).inc()
+            
+            # Observe response time histogram
+            worker.metrics.dns_response_time.labels(server=server).observe(response_time_sec)
+            
+            # pdate latest response time
+            worker.metrics.dns_avg_response_time.labels(server=server).set(response_time_sec)
+            
+            # Increment query type count (A, AAAA, CNAME, etc.)
+            worker.metrics.dns_query_types_count.labels(qtype=result["qtype"]).inc()
+            
+            # Increment successful resolution count
+            if result["rcode"] == "NOERROR":
+                worker.metrics.dns_noerror_count.labels(server=server).inc()
+            else:
+                # Increment failed resolution count (NXDOMAIN, SERVFAIL...)
+                worker.metrics.dns_failure_count.labels(server=server, rcode=result["rcode"]).inc()
+
+
     return results
