@@ -1,0 +1,26 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  dockerhub:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Build the Docker image
+      run: |
+        docker build . --file Dockerfile -t dnstester
+
+    - name: Tag image
+      run: |
+        docker tag dnstester dmachard/dnstester:${{ github.event.release.tag_name }}
+        docker tag dnstester dmachard/dnstester:latest
+
+    - name: Upload to DockerHub
+      run: |
+        docker login -u ${{ secrets.DOCKERHUB_LOGIN }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+        docker push dmachard/dnstester:latest
+        docker push dmachard/dnstester:${{ github.event.release.tag_name }}
