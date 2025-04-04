@@ -21,6 +21,6 @@ jobs:
 
     - name: Upload to DockerHub
       run: |
-        docker login -u ${{ secrets.DOCKERHUB_LOGIN }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+        echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_LOGIN }}" --password-stdin
         docker push dmachard/dnstester:latest
         docker push dmachard/dnstester:${{ github.event.release.tag_name }}
