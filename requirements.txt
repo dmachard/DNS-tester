@@ -6,3 +6,4 @@ pydantic==2.11.1
 pytest==8.3.5
 httpx==0.28.1
 prometheus-client==0.21.1
+ansible==11.3.0

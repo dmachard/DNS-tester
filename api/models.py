@@ -2,23 +2,24 @@ from pydantic import BaseModel, Field, field_validator
 from typing import List, Dict, Literal, Optional
 
 # List of allowed protocols
-ALLOWED_PROTOCOLS = ["udp://", "tcp://", "https://", "quic://", "tls://"]
+ALLOWED_PROTOCOLS = ("udp://", "tcp://", "https://", "quic://", "tls://")
+
+class DNSServer(BaseModel):
+    target: str = Field(..., description="DNS server target with protocol")
+    description: Optional[str] = Field(None, description="Optional description of the DNS server")
+
+    @field_validator('target')
+    @classmethod
+    def check_target_protocol(cls, v):
+        if not v.startswith(ALLOWED_PROTOCOLS):
+            raise ValueError(f"DNS server target '{v}' must start with one of {ALLOWED_PROTOCOLS}.")
+        return v
 
 class DNSLookup(BaseModel):
     domain: str = Field(..., description="Domain name to query")
-    dns_servers: List[str] = Field(..., description="List of DNS servers to use")
+    dns_servers: Optional[List[DNSServer]] = Field(..., description="List of DNS servers to use")
     qtype: Literal["A", "CNAME", "PTR", "TXT", "AAAA"] = Field(..., description="DNS query type")
     tls_insecure_skip_verify: bool = Field(False, title="TLS Insecure Skip Verify", description="Skip TLS certificate verification (for TLS-based queries)")
-
-
-    @field_validator("dns_servers")
-    @classmethod
-    def check_dns_protocol(cls, v):
-        # Validate that each DNS server starts with a valid protocol
-        for server in v:
-            if not any(server.startswith(protocol) for protocol in ALLOWED_PROTOCOLS):
-                raise ValueError(f"DNS server '{server}' must start with one of {', '.join(ALLOWED_PROTOCOLS)}")
-        return v
 
 class DNSAnswer(BaseModel):
     """Represents a single DNS answer record."""

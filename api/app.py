@@ -23,7 +23,8 @@ async def create_dns_lookup(request: DNSLookup):
     """
     Enqueue a DNS test task.
     """
-    task = celery_lookup_dns.delay(request.domain, request.qtype, request.dns_servers, request.tls_insecure_skip_verify)
+    dns_servers = [server.model_dump() for server in request.dns_servers] if request.dns_servers else []
+    task = celery_lookup_dns.delay(request.domain, request.qtype, dns_servers, request.tls_insecure_skip_verify)
     return {"task_id": task.id, "message": "DNS lookup enqueued"}
 
 @app.get("/tasks/{task_id}", response_model=DNSLookupStatus)

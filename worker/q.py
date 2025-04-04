@@ -33,15 +33,15 @@ def run_q(domain, qtype, dns_servers, tls_insecure_skip_verify):
     for server in dns_servers:
         try:
             # Clean the server string
-            server_addr = server
-            if server.startswith("udp://"):
-                server_addr = server.replace("udp://", "")
+            server_addr = server["target"]
+            if server["target"].startswith("udp://"):
+                server_addr = server["target"].replace("udp://", "")
 
             # Execute q command
             cmd = ["q", "--format=json", "@" + server_addr, domain, qtype]
 
             # Usage HTTP2 for DoH
-            if server.startswith("https://"):
+            if server["target"].startswith("https://"):
                 cmd.append("--http2")
 
             # Insecure TLS verification?
@@ -60,7 +60,7 @@ def run_q(domain, qtype, dns_servers, tls_insecure_skip_verify):
             if process.returncode == 0:
                 output_json = json.loads(stdout.decode('utf-8'))
                 if not len(output_json):
-                    results[server] = {
+                    results[server["target"]] = {
                         "command_status": "error",
                         "error": "JSON Output empty"
                     }
@@ -75,6 +75,7 @@ def run_q(domain, qtype, dns_servers, tls_insecure_skip_verify):
                     qtype_text = TYPE_MAPPING.get(qtype_num, "Unknown")
 
                     formatted_output = {
+                        "target_description": server.get("description", ""),
                         "rcode": rcode_text,
                         "name": first_output["queries"][0]["question"][0]["name"] if first_output.get("queries") else "Unknown",
                         "qtype": qtype_text,
@@ -93,7 +94,7 @@ def run_q(domain, qtype, dns_servers, tls_insecure_skip_verify):
                                         or ans.get("mx") or ans.get("soa") 
                                 })
                     
-                    results[server] = {
+                    results[server["target"]] = {
                         "command_status": "ok",
                         "time_ms": first_output["time"] / 1_000_000,
                         **formatted_output
@@ -101,12 +102,12 @@ def run_q(domain, qtype, dns_servers, tls_insecure_skip_verify):
 
             else:
                 error_output = stderr.decode('utf-8') or "Unknown error"
-                results[server] = {
+                results[server["target"]] = {
                     "command_status": "error",
                     "error": f"Process returned code {process.returncode}: {error_output}"
                 }
         except Exception as e:
-            results[server] = {
+            results[server["target"]] = {
                 "command_status": "error",
                 "error": str(e)
             }

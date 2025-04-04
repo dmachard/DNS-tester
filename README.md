@@ -31,7 +31,7 @@ curl -X POST http://localhost:5000/dns-lookup \
   -H "Content-Type: application/json" \
   -d '{
         "domain": "example.com", 
-        "dns_servers": ["udp://8.8.8.8:53", "tls://1.1.1.1:853"], 
+        "dns_servers": [{"target": "udp://8.8.8.8:53"}, {"target": "tls://1.1.1.1:853"}], 
         "qtype": "A",
         "tls_insecure_skip_verify": false
       }'

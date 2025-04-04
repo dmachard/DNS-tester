@@ -15,38 +15,38 @@ def test_health_check():
 def test_post_dnslookup_get_taskid(mock_celery):
     data = {
         "domain": "example.com",
-        "dns_servers": ["udp://8.8.8.8:53", "tls://1.1.1.1:853"],
+        "dns_servers": [ {"target": "udp://8.8.8.8:53", "description": ""}, {"target": "tls://1.1.1.1:853", "description": ""}],
         "qtype": "A"
     }
     response = client.post("/dns-lookup", json=data)
 
     assert response.status_code == 200
     assert response.json() == {"task_id": "fake-task-id", "message": "DNS lookup enqueued"}
-    mock_celery.assert_called_once_with("example.com", "A", ["udp://8.8.8.8:53", "tls://1.1.1.1:853"], False)
+    mock_celery.assert_called_once_with("example.com", "A", [{"target": "udp://8.8.8.8:53", "description": ""}, {"target": "tls://1.1.1.1:853", "description": ""}], False)
 
 @pytest.mark.parametrize("valid_qtype", ["A", "AAAA", "CNAME", "PTR", "TXT"])
 @patch("worker.lookup.lookup_dns.delay", return_value=MagicMock(id="fake-task-id"))
 def test_post_dnslookup_valid_qtype(mock_celery, valid_qtype):
     response = client.post(
         "/dns-lookup",
-        json={"domain": "example.com", "dns_servers": ["udp://8.8.8.8"], "qtype": valid_qtype}
+        json={"domain": "example.com", "dns_servers": [ {"target": "udp://8.8.8.8:53", "description": ""} ], "qtype": valid_qtype}
     )
     assert response.status_code == 200
     assert "task_id" in response.json()
-    mock_celery.assert_called_once_with("example.com", valid_qtype, ["udp://8.8.8.8"], False)
+    mock_celery.assert_called_once_with("example.com", valid_qtype, [{"target": "udp://8.8.8.8:53", "description": ""}], False)
 
 @pytest.mark.parametrize("invalid_qtype", ["MX", "SRV", "WRONG_TYPE", "123"])
 @patch("worker.lookup.lookup_dns.delay", return_value=MagicMock(id="fake-task-id"))
 def test_post_dnslookup_invalid_qtype(mock_celery, invalid_qtype):
     response = client.post(
         "/dns-lookup",
-        json={"domain": "example.com", "dns_servers": ["udp://8.8.8.8"], "qtype": invalid_qtype}
+        json={"domain": "example.com", "dns_servers": [ {"target": "udp://8.8.8.8:53"} ], "qtype": invalid_qtype}
     )
     assert response.status_code == 422
     assert "detail" in response.json()
 
 @pytest.mark.parametrize("valid_server", [
-    "udp://8.8.8.8", "tcp://1.1.1.1",  "https://dns.google", "quic://9.9.9.9", "tls://dns.cloudflare.com"
+    {"target": "udp://8.8.8.8:53"}, {"target": "tcp://1.1.1.1"},  {"target": "https://dns.google"}, {"target": "quic://9.9.9.9"}, {"target": "tls://dns.cloudflare.com"}
 ])
 @patch("worker.lookup.lookup_dns.delay", return_value=MagicMock(id="fake-task-id"))
 def test_post_dnslookup_valid_dns_server(mock_celery, valid_server):
@@ -58,7 +58,7 @@ def test_post_dnslookup_valid_dns_server(mock_celery, valid_server):
     assert "task_id" in response.json()
 
 @pytest.mark.parametrize("invalid_server", [
-    "8.8.8.8",  "1.1.1.1:53",  "ftp://8.8.8.8", "dns.google", "://9.9.9.9"      
+    {"target": "8.8.8.8"},  {"target": "1.1.1.1:53"},  {"target": "ftp://8.8.8.8"}, {"target": "dns.google"}, {"target": "://9.9.9.9"}      
 ])
 @patch("worker.lookup.lookup_dns.delay", return_value=MagicMock(id="fake-task-id"))
 def test_post_dnslookup_invalid_dns_server(mock_celery, invalid_server):
