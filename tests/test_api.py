@@ -75,6 +75,7 @@ def test_get_tasks_status(mock_async_result):
     mock_async_result.return_value.result = {
         "udp://8.8.8.8:53": {
             "command_status": "ok",
+            "description": "",
             "time_ms": 13.9,
             "rcode": "NoError",
             "name": "example.com.",
@@ -100,6 +101,7 @@ def test_get_tasks_status(mock_async_result):
             "udp://8.8.8.8:53": {
                 "command_status": "ok",
                 "error": None,
+                "description": "",
                 "time_ms": 13.9,
                 "rcode": "NoError",
                 "name": "example.com.",

@@ -46,7 +46,7 @@ def test_run_q_success(mock_popen):
     server_result = result["udp://8.8.8.8"]
 
     assert server_result["command_status"] == "ok"
-    assert server_result["target_description"] == "test"
+    assert server_result["description"] == "test"
     assert server_result["time_ms"] == 12
     assert server_result["rcode"] == "NOERROR"
     assert server_result["name"] == "example.com."
