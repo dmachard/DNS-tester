@@ -1,4 +1,5 @@
 import os
+import logging
 
 from fastapi import FastAPI
 from fastapi.responses import Response
@@ -9,6 +10,7 @@ from worker.lookup import get_metrics as celery_get_metrics
 
 from api.models import DNSLookup, DNSLookupStatus
 
+dnstester_logger = logging.getLogger('dnstester')
 api_version = os.getenv('API_VERSION', '0.0.0')
 
 app = FastAPI(

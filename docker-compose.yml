@@ -5,7 +5,7 @@ services:
       - "6379:6379"
     volumes:
       - redis-data:/data
-      - ./redis.conf:/usr/local/etc/redis/redis.conf
+      - ./conf/redis.conf:/usr/local/etc/redis/redis.conf
     command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
@@ -19,19 +19,23 @@ services:
     ports:
       - "5000:5000"
     env_file:
-      - example.env
+      - ./conf/example.env
     depends_on:
       - redis
       - worker
+    volumes:
+      - ./conf/logging.ini:/app/logging.conf
     command: sh -c "uvicorn api.app:app --host ${UVICORN_HOST:-0.0.0.0} --port ${UVICORN_PORT:-5000} --workers ${UVICORN_WORKERS:-1}"
     restart: unless-stopped
 
   worker:
     build: .
     env_file:
-      - example.env
+      - ./conf/example.env
     depends_on:
       - redis
+    volumes:
+      - ./conf/logging.ini:/app/logging.conf
     command: sh -c "celery -A worker.lookup worker --loglevel=${CELERY_LOGLEVEL:-info} --concurrency=${CELERY_CONCURRENCY:-4}"
     restart: unless-stopped
 

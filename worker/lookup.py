@@ -1,4 +1,6 @@
 import os
+import logging
+import logging.config
 
 from celery import Celery
 from prometheus_client import generate_latest
@@ -13,6 +15,10 @@ wrk.conf.update(
 )
 
 wrk.conf.broker_connection_retry_on_startup = True
+
+@wrk.on_after_configure.connect
+def setup_logging(**kwargs):
+    logging.config.fileConfig('/app/logging.conf')
 
 @wrk.task()
 def lookup_dns(domain, qtype, dns_servers, tls_insecure_skip_verify):

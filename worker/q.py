@@ -1,5 +1,6 @@
 import subprocess
 import json
+import logging
 
 import worker.metrics
 
@@ -22,7 +23,11 @@ TYPE_MAPPING = {
     28: "AAAA"
 }
 
+dnstester_logger = logging.getLogger('dnstester')
+
 def run_q(domain, qtype, dns_servers, tls_insecure_skip_verify):
+    dnstester_logger.debug(f"run_q called with: {domain} {qtype} {dns_servers} {tls_insecure_skip_verify}")
+
     results = {}
     
     for server in dns_servers:
@@ -46,6 +51,12 @@ def run_q(domain, qtype, dns_servers, tls_insecure_skip_verify):
             process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             stdout, stderr = process.communicate()
             
+            # Log the output
+            if stdout:
+                dnstester_logger.debug(f"output from q command: {stdout.decode('utf-8')}")
+            if stderr:
+                dnstester_logger.error(f"error from q command: {stderr.decode('utf-8')}")
+
             if process.returncode == 0:
                 output_json = json.loads(stdout.decode('utf-8'))
                 if not len(output_json):
