@@ -32,6 +32,7 @@ class DNSLookupResult(BaseModel):
     """Represents the result of a DNS lookup request."""
     command_status: str = Field(..., description="Status of the DNS command execution (ok/error).")
     time_ms: Optional[float] = Field(None, description="Time taken for the DNS query in milliseconds.")
+    description: Optional[str] = Field(None, description="DNS server description.")
     rcode: Optional[str] = Field(None, description="Response code (e.g., NoError, NXDomain, etc.).")
     name: Optional[str] = Field(None, description="The queried domain name.")
     qtype: Optional[str] = Field(None, description="Query type (A, AAAA, CNAME, etc.).")

@@ -1,11 +1,11 @@
-# DNS Tester with Async Queue
+# DNS Tester
 
-This project provides a scalable solution for testing multiple DNS servers asynchronously. It uses:
+This tool provides a scalable solution for testing multiple DNS servers asynchronously. It uses:
 - FastAPI for the REST API
 - Redis as a message broker
 - Celery for task queuing and execution
 - Prometheus metrics for real-time monitoring
-- Docker and Docker Compose for containerization
+- Support DNS servers from Ansible inventory
 
 ## Installation
 
@@ -93,6 +93,29 @@ Response:
   }
 }
 ```
+
+### Ansible Inventory Support
+
+The DNS Tester supports retrieving DNS server information from a static Ansible inventory file.
+
+When no dns_servers are explicitly provided in the request, the API loads the DNS server list from the [dns] group in the inventory.
+
+Example inventory:
+
+```
+[dns]
+google1 dns_address="8.8.8.8" domain_name="" services="do53" details="DNS GOOGLE"
+quad9 dns_address="9.9.9.9" domain_name="dns9.quad9.net." services="do53, dot, doh" details="DNS QUAD9"
+cloudflare dns_address="1.1.1.1" domain_name="" services="do53" details="DNS CLOUDFLARE"
+```
+
+Each host entry must define:
+  - dns_address (required): IP address of the DNS server
+  - domain_name (optional): FQDN used for protocols like DoT/DoH
+  - services (optional): Comma-separated list of supported protocols (do53, dot, doh)
+  - sdetails (optional): Description of the DNS provider
+
+This allows for flexible and centralized DNS configuration management using existing Ansible setups.
 
 ## Monitoring with Prometheus
 

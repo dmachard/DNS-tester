@@ -75,12 +75,13 @@ def run_q(domain, qtype, dns_servers, tls_insecure_skip_verify):
                     qtype_text = TYPE_MAPPING.get(qtype_num, "Unknown")
 
                     formatted_output = {
-                        "target_description": server.get("description", ""),
+                        "description": server.get("description", ""),
                         "rcode": rcode_text,
                         "name": first_output["queries"][0]["question"][0]["name"] if first_output.get("queries") else "Unknown",
                         "qtype": qtype_text,
                         "answers": []
                     }
+                    print(formatted_output)
 
                     for reply in replies:
                         if "answer" in reply and reply["answer"]:
