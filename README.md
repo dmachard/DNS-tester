@@ -33,6 +33,8 @@ sudo docker compose --env-file example.env up -d
 
 ### Execute a DNS lookup
 
+The swagger is available at http://localhost:5000/docs#
+
 ```bash
 curl -X POST http://localhost:5000/dns-lookup \
   -H "Content-Type: application/json" \
