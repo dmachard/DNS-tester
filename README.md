@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://img.shields.io/github/v/release/dmachard/dns-testerlogo=github&sort=semver" alt="release"/>
+  <img src="https://img.shields.io/github/v/release/dmachard/dns-tester?logo=github&sort=semver" alt="release"/>
   <img src="https://img.shields.io/docker/pulls/dmachard/dnstester.svg" alt="docker"/>
 </p>
 
