@@ -1,4 +1,11 @@
-# DNS Tester
+<p align="center">
+  <img src="https://img.shields.io/github/v/release/dmachard/dns-testerlogo=github&sort=semver" alt="release"/>
+  <img src="https://img.shields.io/docker/pulls/dmachard/dnstester.svg" alt="docker"/>
+</p>
+
+<p align="center">
+  <img src="docs/logo-dns-tester.png" alt="DNS-collector"/>
+</p>
 
 This tool provides a scalable solution for testing multiple DNS servers asynchronously. It uses:
 - FastAPI for the REST API
@@ -141,3 +148,9 @@ source venv/bin/activate
 python -m pip install -r requirements.txt
 pytest tests/ -v
 ```
+
+## More tools
+
+<p align="center">
+  <a href="https://github.com/dmachard/DNS-collector"><img src="docs/dns-collector_logo.png" alt="DNS-collector"/></a>
+</p>
