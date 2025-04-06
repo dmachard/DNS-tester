@@ -149,9 +149,9 @@ python -m pip install -r requirements.txt
 pytest tests/ -v
 ```
 
-## More tools
+## More DNS tools ?
 
-## More tools
+Ingesting, pipelining, and enhancing your DNS logs with usage indicators, security analysis, and additional metadata. 
 
 <a href="https://github.com/dmachard/DNS-collector" target="_blank">
   <img src="https://github.com/dmachard/DNS-collector/blob/main/docs/dns-collector_logo.png" alt="DNS-collector" style="max-width: 300px;"/>
