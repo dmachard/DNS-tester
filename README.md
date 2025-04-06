@@ -151,6 +151,8 @@ pytest tests/ -v
 
 ## More tools
 
-<p align="center">
-  <a href="https://github.com/dmachard/DNS-collector"><img src="docs/dns-collector_logo.png" alt="DNS-collector"/></a>
-</p>
+## More tools
+
+<a href="https://github.com/dmachard/DNS-collector" target="_blank">
+  <img src="https://github.com/dmachard/DNS-collector/blob/main/docs/dns-collector_logo.png" alt="DNS-collector" style="max-width: 300px;"/>
+</a>
