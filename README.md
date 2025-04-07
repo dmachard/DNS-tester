@@ -66,40 +66,43 @@ Response:
 {
   "task_id": "30949f79-c80f-41a5-8a93-754f260472ca",
   "task_status": "SUCCESS",
-  "result": {
-    "udp://8.8.8.8:53": {
-      "command_status": "ok",
-      "description": "",
-      "time_ms": 13.452129,
-      "rcode": "NOERROR",
-      "name": "example.com.",
-      "qtype": "A",
-      "answers": [
-        {
-          "name": "example.com.",
-          "type": "A",
-          "ttl": 110,
-          "value": "23.192.228.80"
-        }
-      ],
-      "error": null
-    },
-    "tls://1.1.1.1:853": {
-      "command_status": "ok",
-      "description": "",
-      "time_ms": 128.041827,
-      "rcode": "NOERROR",
-      "name": "example.com.",
-      "qtype": "A",
-      "answers": [
-        {
-          "name": "example.com.",
-          "type": "A",
-          "ttl": 193,
-          "value": "23.192.228.80"
-        }
-      ],
-      "error": null
+  "task_result": {
+    "duration": 0.1,
+    "details": {
+      "udp://8.8.8.8:53": {
+        "command_status": "ok",
+        "description": "",
+        "time_ms": 13.452129,
+        "rcode": "NOERROR",
+        "name": "example.com.",
+        "qtype": "A",
+        "answers": [
+          {
+            "name": "example.com.",
+            "type": "A",
+            "ttl": 110,
+            "value": "23.192.228.80"
+          }
+        ],
+        "error": null
+      },
+      "tls://1.1.1.1:853": {
+        "command_status": "ok",
+        "description": "",
+        "time_ms": 128.041827,
+        "rcode": "NOERROR",
+        "name": "example.com.",
+        "qtype": "A",
+        "answers": [
+          {
+            "name": "example.com.",
+            "type": "A",
+            "ttl": 193,
+            "value": "23.192.228.80"
+          }
+        ],
+        "error": null
+      }
     }
   }
 }
@@ -124,7 +127,7 @@ Each host entry must define:
   - dns_address (required): IP address of the DNS server
   - domain_name (optional): FQDN used for protocols like DoT/DoH
   - services (optional): Comma-separated list of supported protocols (do53, dot, doh)
-  - sdetails (optional): Description of the DNS provider
+  - details (optional): Description of the DNS provider
 
 This allows for flexible and centralized DNS configuration management using existing Ansible setups.
 

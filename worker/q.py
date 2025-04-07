@@ -27,14 +27,14 @@ TYPE_MAPPING = {
 dnstester_logger = logging.getLogger('dnstester')
 
 
-def _query_server(domain, qtype, server, tls_insecure_skip_verify):
+def _query_server(domain, qtype, server, tls_insecure_skip_verify, retries=3):
     result = {}
     try:
         server_addr = server["target"]
         if server_addr.startswith("udp://"):
             server_addr = server_addr.replace("udp://", "")
 
-        cmd = ["q", "--format=json", "@" + server_addr, domain, qtype]
+        cmd = ["q", "--format=json", "--timeout=3s", "@" + server_addr, domain, qtype]
 
         if qtype == "PTR":
             cmd.append("-x")
@@ -44,62 +44,63 @@ def _query_server(domain, qtype, server, tls_insecure_skip_verify):
             cmd.append("--tls-insecure-skip-verify")
 
         dnstester_logger.debug(f"Executing command: {' '.join(cmd)}")
+        for attempt in range(retries):
+            process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            stdout, stderr = process.communicate()
 
-        process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        stdout, stderr = process.communicate()
+            if stdout:
+                dnstester_logger.debug(f"output from q command: {stdout.decode('utf-8')}")
+            if stderr:
+                dnstester_logger.error(f"error from q command: {stderr.decode('utf-8')}")
 
-        if stdout:
-            dnstester_logger.debug(f"output from q command: {stdout.decode('utf-8')}")
-        if stderr:
-            dnstester_logger.error(f"error from q command: {stderr.decode('utf-8')}")
+            if process.returncode == 0:
+                output_json = json.loads(stdout.decode('utf-8'))
+                if not output_json:
+                    result = {
+                        "command_status": "error",
+                        "error": "JSON Output empty"
+                    }
+                else:
+                    first_output = output_json[0]
+                    replies = first_output.get("replies", [])
 
-        if process.returncode == 0:
-            output_json = json.loads(stdout.decode('utf-8'))
-            if not output_json:
+                    rcode_num = replies[0]["rcode"] if replies and "rcode" in replies[0] else "Unknown"
+                    rcode_text = RCODE_MAPPING.get(rcode_num, "Unknown")
+
+                    qtype_num = first_output["queries"][0]["question"][0]["qtype"] if first_output.get("queries") else "Unknown"
+                    qtype_text = TYPE_MAPPING.get(qtype_num, "Unknown")
+
+                    formatted_output = {
+                        "description": server.get("description", ""),
+                        "rcode": rcode_text,
+                        "name": first_output["queries"][0]["question"][0]["name"] if first_output.get("queries") else "Unknown",
+                        "qtype": qtype_text,
+                        "answers": []
+                    }
+
+                    for reply in replies:
+                        if "answer" in reply and reply["answer"]:
+                            for ans in reply["answer"]:
+                                value = next((ans.get(k) for k in ["a", "aaaa", "ptr", "ns", "target", "txt", "mx", "soa"] if ans.get(k)), "Unknown")
+                                formatted_output["answers"].append({
+                                    "name": ans["hdr"]["name"],
+                                    "type": TYPE_MAPPING.get(ans["hdr"]["rrtype"], "Unknown"),
+                                    "ttl": ans["hdr"]["ttl"],
+                                    "value": value
+                                })
+
+                    result = {
+                        "command_status": "ok",
+                        "time_ms": first_output["time"] / 1_000_000,
+                        **formatted_output
+                    }
+                break
+            else:
                 result = {
                     "command_status": "error",
-                    "error": "JSON Output empty"
+                    "error": f"Process returned code {process.returncode}: {stderr.decode('utf-8') or 'Unknown error'}"
                 }
-            else:
-                first_output = output_json[0]
-                replies = first_output.get("replies", [])
-
-                rcode_num = replies[0]["rcode"] if replies and "rcode" in replies[0] else "Unknown"
-                rcode_text = RCODE_MAPPING.get(rcode_num, "Unknown")
-
-                qtype_num = first_output["queries"][0]["question"][0]["qtype"] if first_output.get("queries") else "Unknown"
-                qtype_text = TYPE_MAPPING.get(qtype_num, "Unknown")
-
-                formatted_output = {
-                    "description": server.get("description", ""),
-                    "rcode": rcode_text,
-                    "name": first_output["queries"][0]["question"][0]["name"] if first_output.get("queries") else "Unknown",
-                    "qtype": qtype_text,
-                    "answers": []
-                }
-
-                for reply in replies:
-                    if "answer" in reply and reply["answer"]:
-                        for ans in reply["answer"]:
-                            value = next((ans.get(k) for k in ["a", "aaaa", "ptr", "ns", "target", "txt", "mx", "soa"] if ans.get(k)), "Unknown")
-                            formatted_output["answers"].append({
-                                "name": ans["hdr"]["name"],
-                                "type": TYPE_MAPPING.get(ans["hdr"]["rrtype"], "Unknown"),
-                                "ttl": ans["hdr"]["ttl"],
-                                "value": value
-                            })
-
-                result = {
-                    "command_status": "ok",
-                    "time_ms": first_output["time"] / 1_000_000,
-                    **formatted_output
-                }
-        else:
-            result = {
-                "command_status": "error",
-                "error": f"Process returned code {process.returncode}: {stderr.decode('utf-8') or 'Unknown error'}"
-            }
-
+                dnstester_logger.info(f"Attempt {attempt + 1} retry resolution for {domain} on {server_addr}")
     except Exception as e:
         result = {
             "command_status": "error",

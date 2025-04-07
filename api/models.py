@@ -21,7 +21,7 @@ class ReverseDNSLookup(BaseModel):
 
 class DNSLookup(BaseModel):
     domain: str = Field(..., description="Domain name to query")
-    dns_servers: Optional[List[DNSServer]] = Field(..., description="List of DNS servers to use")
+    dns_servers: Optional[List[DNSServer]] = Field(None, description="List of DNS servers to use")
     qtype: Literal["A", "CNAME", "PTR", "TXT", "AAAA"] = Field(..., description="DNS query type")
     tls_insecure_skip_verify: bool = Field(False, title="TLS Insecure Skip Verify", description="Skip TLS certificate verification (for TLS-based queries)")
 
@@ -43,11 +43,15 @@ class DNSLookupResult(BaseModel):
     answers: Optional[List[DNSAnswer]] = Field(None, description="List of DNS answer records.")
     error: Optional[str] = Field(None, description="Error message if the query failed.")
 
+class DNSLookupResults(BaseModel):
+    """Encapsulates the details and duration of the DNS lookup results."""
+    details: Dict[str, DNSLookupResult] = Field(
+        ..., description="Results of the DNS query for each server."
+    )
+    duration: Optional[float] = Field(None, description="Duration of the DNS lookup task in seconds.")
+
 class DNSLookupStatus(BaseModel):
     """Represents the response of a DNS task lookup request."""
     task_id: str = Field(..., description="Unique identifier for the DNS lookup task.")
     task_status: str = Field(..., description="Current status of the task (e.g., PENDING, SUCCESS).")
-    result: Dict[str, DNSLookupResult] = Field(
-        ..., description="Results of the DNS query for each server."
-    )
-
+    task_result: Optional[DNSLookupResults] = Field(None, description="Results of the DNS lookup.")
