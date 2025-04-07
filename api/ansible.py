@@ -42,18 +42,18 @@ def get_dns_servers_from_ansible(inventory_path='/app/ansible_hosts.ini'):
         supported_services = dns_server.get('services', '').split(',')
 
         for service in supported_services:
-            if service == 'do53':
+            if service.strip() == 'do53':
                 dns_info = { "target": f"udp://{dns_address}", "description": description }
                 dns_info_list.append(dns_info)
                 dns_info = { "target": f"tcp://{dns_address}", "description": description }
                 dns_info_list.append(dns_info)
-            elif service == 'doh':
+            elif service.strip() == 'doh':
                 if domain_name:
                     dns_info = { "target": f"https://{domain_name}", "description": description }
                 else:
                     dns_info = { "target": f"https://{dns_address}", "description": description }
                 dns_info_list.append(dns_info)
-            elif service == 'dot':
+            elif service.strip() == 'dot':
                 if domain_name:
                     dns_info = { "target": f"tls://{domain_name}", "description": description }
                 else:

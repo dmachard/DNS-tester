@@ -85,21 +85,24 @@ def test_post_dnslookup_invalid_dns_server(mock_celery, invalid_server):
 def test_get_tasks_status(mock_async_result):
     mock_async_result.return_value.state = "SUCCESS"
     mock_async_result.return_value.result = {
-        "udp://8.8.8.8:53": {
-            "command_status": "ok",
-            "description": "",
-            "time_ms": 13.9,
-            "rcode": "NoError",
-            "name": "example.com.",
-            "qtype": "A",
-            "answers": [
-                {
+            "duration": 0.1,
+            "details": {
+                "udp://8.8.8.8:53": {
+                    "command_status": "ok",
+                    "description": "",
+                    "time_ms": 13.9,
+                    "rcode": "NoError",
                     "name": "example.com.",
-                    "type": "A",
-                    "ttl": 190,
-                    "value": "93.184.216.34"
-                }
-            ]
+                    "qtype": "A",
+                    "answers": [
+                        {
+                            "name": "example.com.",
+                            "type": "A",
+                            "ttl": 190,
+                            "value": "93.184.216.34"
+                        }
+                    ]
+            }
         }
     }
 
@@ -109,23 +112,26 @@ def test_get_tasks_status(mock_async_result):
     assert response.json() == {
         "task_id": "fake-task-id",
         "task_status": "SUCCESS",
-        "result": {
-            "udp://8.8.8.8:53": {
-                "command_status": "ok",
-                "error": None,
-                "description": "",
-                "time_ms": 13.9,
-                "rcode": "NoError",
-                "name": "example.com.",
-                "qtype": "A",
-                "answers": [
-                    {
-                        "name": "example.com.",
-                        "type": "A",
-                        "ttl": 190,
-                        "value": "93.184.216.34"
-                    }
-                ]
+        "task_result": {
+            "duration": 0.1,
+            "details": {
+                "udp://8.8.8.8:53": {
+                    "command_status": "ok",
+                    "error": None,
+                    "description": "",
+                    "time_ms": 13.9,
+                    "rcode": "NoError",
+                    "name": "example.com.",
+                    "qtype": "A",
+                    "answers": [
+                        {
+                            "name": "example.com.",
+                            "type": "A",
+                            "ttl": 190,
+                            "value": "93.184.216.34"
+                        }
+                    ]
+                }
             }
         }
     }

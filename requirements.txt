@@ -4,6 +4,7 @@ fastapi==0.115.12
 uvicorn==0.34.0
 pydantic==2.11.1
 pytest==8.3.5
+pytest-mock==3.14.0
 httpx==0.28.1
 prometheus-client==0.21.1
 ansible==11.3.0

@@ -71,14 +71,7 @@ async def get_task_status(task_id: str):
     Get task status by task ID.
     """
     task_result = celery_lookup_dns.AsyncResult(task_id)
-    if task_result.state == 'PENDING':
-        return {"task_id": task_id, "task_status": "PENDING", "message": "Task is pending execution"}
-    elif task_result.state == 'FAILURE':
-        return {"task_id": task_id, "task_status": "FAILURE", "error": str(task_result.result)}
-    elif task_result.state == 'SUCCESS':
-        return {"task_id": task_id, "task_status": "SUCCESS", "result": task_result.result}
-    else:
-        return {"task_id": task_id, "task_status": task_result.state}
+    return {"task_id": task_id, "task_status": task_result.state, "task_result": task_result.result}
     
 @app.get("/status")
 async def health_check():

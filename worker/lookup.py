@@ -1,6 +1,7 @@
 import os
 import logging
 import logging.config
+import time
 
 from celery import Celery
 from prometheus_client import generate_latest
@@ -22,7 +23,10 @@ def setup_logging(**kwargs):
 
 @wrk.task()
 def lookup_dns(domain, qtype, dns_servers, tls_insecure_skip_verify):
-    return run_q(domain, qtype, dns_servers, tls_insecure_skip_verify)
+    start_time = time.time()
+    results = run_q(domain, qtype, dns_servers, tls_insecure_skip_verify)
+    runtime = time.time() - start_time
+    return {"details": results, "duration": runtime}
 
 @wrk.task()
 def get_metrics():
