@@ -8,3 +8,4 @@ pytest-mock==3.14.0
 httpx==0.28.1
 prometheus-client==0.21.1
 ansible==11.3.0
+requests==2.32.3
