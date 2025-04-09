@@ -131,6 +131,76 @@ Each host entry must define:
 
 This allows for flexible and centralized DNS configuration management using existing Ansible setups.
 
+
+## CLI Usage
+
+The DNS Tester includes a CLI tool for performing DNS lookups directly from the command line.
+
+### Running the CLI
+
+To use the CLI, run the following command:
+
+```bash
+python cli/main.py <domain> [dns_servers...] [--qtype <query_type>] [--api-url <api_url>] [--insecure]
+```
+
+### Arguments
+
+- `<domain>`: The domain name to query.
+- `[dns_servers...]`: A list of DNS servers to query (e.g., `udp://8.8.8.8`). If not provided, the servers will be fetched from the inventory.
+- `--qtype`: The DNS query type. Supported values are `A` (default) and `AAAA`.
+- `--api-url`: The base URL of the API (default: `http://localhost:5000`).
+- `--insecure`: Skip TLS certificate verification for secure DNS queries.
+
+### Example Usage
+
+#### Query a domain using specific DNS servers:
+```bash
+python cli/main.py github.com udp://8.8.8.8 udp://1.1.1.1 --qtype A
+```
+
+#### Query a domain without specifying DNS servers (fetch from inventory):
+```bash
+python cli/main.py github.com --qtype AAAA
+```
+
+#### Query a domain with a custom API URL:
+```bash
+python cli/main.py github.com udp://8.8.8.8 --api-url http://custom-api-url:5000
+```
+
+#### Query a domain with insecure TLS verification:
+```bash
+python cli/main.py github.com udp://8.8.8.8 --insecure
+```
+
+### Output
+
+The CLI will display the results of the DNS lookup, including the DNS server, resolved IP addresses, TTL values, and response times.
+
+Example output:
+```
+Starting DNS lookup for domain: github.com
+  Using DNS servers: Fetching from inventory
+  API Base URL: http://localhost:5000
+  TLS Skip Verify: False
+  Task ID: mock-task-id
+
+DNS Lookup Results:
+  udp://8.8.8.8 - 140.82.121.3 (TTL: 60) - 19.763049 ms
+  udp://9.9.9.9 - 140.82.121.3 (TTL: 42) - 22.321455 ms
+  tcp://8.8.8.8 - 140.82.121.3 (TTL: 60) - 32.927188 ms
+  udp://1.1.1.1 - 140.82.121.4 (TTL: 37) - 10.750393 ms
+  udp://9.9.9.10 - 140.82.121.3 (TTL: 42) - 20.962053 ms
+  tcp://9.9.9.9 - 140.82.121.3 (TTL: 42) - 41.965528 ms
+  tcp://1.1.1.1 - 140.82.121.4 (TTL: 39) - 23.187865 ms
+  tcp://9.9.9.10 - 140.82.121.3 (TTL: 42) - 42.040472 ms
+  tls://dns9.quad9.net. - 140.82.121.3 (TTL: 22) - 118.276151 ms
+  https://dns9.quad9.net. - 140.82.121.3 (TTL: 22) - 113.461824 ms
+  https://dns10.quad9.net. - 140.82.121.4 (TTL: 42) - 117.532757 ms
+  tls://dns10.quad9.net. - 140.82.121.4 (TTL: 41) - 145.65853 ms
+```
+
 ## Monitoring with Prometheus
 
 This project includes Prometheus metrics to track DNS resolution performance.
