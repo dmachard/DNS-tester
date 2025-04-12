@@ -52,13 +52,21 @@ def main(post_dns_lookup_func=post_dns_lookup, get_task_status_func=get_task_sta
                         if rcode != "NOERROR":
                             print(f"{server} - No valid answer (rcode: {rcode}) - {result['time_ms']} ms")
                         else:
-                            final_answers = [
-                                f"{ans['value']} (TTL: {ans['ttl']})"
+                            answers = [
+                                (ans["value"], ans["ttl"])
                                 for ans in result["answers"]
                                 if ans["type"] in ["A", "AAAA"]
                             ]
-                            if final_answers:
-                                print(f"\t{server} - {', '.join(final_answers)} - {result['time_ms']} ms")
+                            if answers:
+                                ip_list = [ip for ip, _ in answers]
+                                ttl_list = [ttl for _, ttl in answers]
+                                time_ms = result["time_ms"]
+
+                                if len(set(ttl_list)) == 1:
+                                    print(f"\t{server} - {time_ms:.5f}ms - TTL: {ttl_list[0]}s - {', '.join(ip_list)}")
+                                else:
+                                    ip_with_ttl = [f"{ip} (TTL: {ttl})" for ip, ttl in answers]
+                                    print(f"\t{server} - {time_ms:.5f}ms - {', '.join(ip_with_ttl)}")
                             else:
                                 print(f"\t{server} - No A or AAAA records found - {result['time_ms']} ms")
                     else:
