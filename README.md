@@ -154,7 +154,7 @@ python3 cli/main.py <domain> [dns_servers...] [--qtype <query_type>] [--api-url 
 
 ### Example Usage
 
-#### Query a domain using specific DNS servers:
+#### Query a domain or IP using specific DNS servers:
 ```bash
 python3 cli/main.py github.com udp://8.8.8.8 udp://1.1.1.1 --qtype A
 ```
