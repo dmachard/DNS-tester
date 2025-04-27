@@ -26,7 +26,7 @@ def mock_get_task_status():
         ]
         yield mock_get
 
-def test_main(mock_post_dns_lookup, mock_get_task_status, capsys):
+def test_main_direct_lookup(mock_post_dns_lookup, mock_get_task_status, capsys):
     # Simulate command-line arguments
     with patch("sys.argv", ["main.py", "example.com", "udp://8.8.8.8", "--qtype", "A"]):
         # Pass mocked functions to main
@@ -37,4 +37,4 @@ def test_main(mock_post_dns_lookup, mock_get_task_status, capsys):
     
     # Assertions
     assert "mock-task-id" in captured.out
-    assert "udp://8.8.8.8 - 93.184.216.34 (TTL: 300) - 30.5 ms" in captured.out
+    assert "udp://8.8.8.8 - 30.50000ms - TTL: 300s - 93.184.216.34" in captured.out

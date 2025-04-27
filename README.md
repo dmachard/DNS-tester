@@ -141,7 +141,7 @@ The DNS Tester includes a CLI tool for performing DNS lookups directly from the 
 To use the CLI, run the following command:
 
 ```bash
-python cli/main.py <domain> [dns_servers...] [--qtype <query_type>] [--api-url <api_url>] [--insecure]
+python3 cli/main.py <domain> [dns_servers...] [--qtype <query_type>] [--api-url <api_url>] [--insecure]
 ```
 
 ### Arguments
@@ -154,24 +154,24 @@ python cli/main.py <domain> [dns_servers...] [--qtype <query_type>] [--api-url <
 
 ### Example Usage
 
-#### Query a domain using specific DNS servers:
+#### Query a domain or IP using specific DNS servers:
 ```bash
-python cli/main.py github.com udp://8.8.8.8 udp://1.1.1.1 --qtype A
+python3 cli/main.py github.com udp://8.8.8.8 udp://1.1.1.1 --qtype A
 ```
 
 #### Query a domain without specifying DNS servers (fetch from inventory):
 ```bash
-python cli/main.py github.com --qtype AAAA
+python3 cli/main.py github.com --qtype AAAA
 ```
 
 #### Query a domain with a custom API URL:
 ```bash
-python cli/main.py github.com udp://8.8.8.8 --api-url http://custom-api-url:5000
+python3 cli/main.py github.com udp://8.8.8.8 --api-url http://custom-api-url:5000
 ```
 
 #### Query a domain with insecure TLS verification:
 ```bash
-python cli/main.py github.com udp://8.8.8.8 --insecure
+python3 cli/main.py github.com udp://8.8.8.8 --insecure
 ```
 
 ### Output
@@ -184,21 +184,21 @@ Starting DNS lookup for domain: github.com
   Using DNS servers: Fetching from inventory
   API Base URL: http://localhost:5000
   TLS Skip Verify: False
-  Task ID: mock-task-id
+  Task ID: 1245-3456-6789
 
 DNS Lookup Results:
-  udp://8.8.8.8 - 140.82.121.3 (TTL: 60) - 19.763049 ms
-  udp://9.9.9.9 - 140.82.121.3 (TTL: 42) - 22.321455 ms
-  tcp://8.8.8.8 - 140.82.121.3 (TTL: 60) - 32.927188 ms
-  udp://1.1.1.1 - 140.82.121.4 (TTL: 37) - 10.750393 ms
-  udp://9.9.9.10 - 140.82.121.3 (TTL: 42) - 20.962053 ms
-  tcp://9.9.9.9 - 140.82.121.3 (TTL: 42) - 41.965528 ms
-  tcp://1.1.1.1 - 140.82.121.4 (TTL: 39) - 23.187865 ms
-  tcp://9.9.9.10 - 140.82.121.3 (TTL: 42) - 42.040472 ms
-  tls://dns9.quad9.net. - 140.82.121.3 (TTL: 22) - 118.276151 ms
-  https://dns9.quad9.net. - 140.82.121.3 (TTL: 22) - 113.461824 ms
-  https://dns10.quad9.net. - 140.82.121.4 (TTL: 42) - 117.532757 ms
-  tls://dns10.quad9.net. - 140.82.121.4 (TTL: 41) - 145.65853 ms
+  udp://8.8.8.8 - 15.76854ms - TTL: 300s - 216.239.32.27
+  udp://9.9.9.9 - 21.19606ms - TTL: 128s - 216.239.32.27
+  udp://9.9.9.10 - 20.19477ms - TTL: 128s - 216.239.32.27
+  tcp://8.8.8.8 - 25.51609ms - TTL: 300s - 216.239.32.27
+  udp://1.1.1.1 - 10.36629ms - TTL: 150s - 216.239.32.27
+  tcp://1.1.1.1 - 23.39788ms - TTL: 227s - 216.239.32.27
+  tcp://9.9.9.9 - 45.15521ms - TTL: 300s - 216.239.32.27
+  tcp://9.9.9.10 - 43.10374ms - TTL: 300s - 216.239.32.27
+  tls://dns9.quad9.net. - 104.73758ms - TTL: 193s - 216.239.32.27
+  tls://dns10.quad9.net. - 107.42914ms - TTL: 246s - 216.239.32.27
+  https://dns9.quad9.net. - 116.62068ms - TTL: 65s - 216.239.32.27
+  https://dns10.quad9.net. - 115.81571ms - TTL: 245s - 216.239.32.27
 ```
 
 ## Monitoring with Prometheus
