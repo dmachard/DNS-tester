@@ -184,7 +184,7 @@ Starting DNS lookup for domain: github.com
   Using DNS servers: Fetching from inventory
   API Base URL: http://localhost:5000
   TLS Skip Verify: False
-  Task ID: mock-task-id
+  Task ID: 1245-3456-6789
 
 DNS Lookup Results:
   udp://8.8.8.8 - 15.76854ms - TTL: 300s - 216.239.32.27
