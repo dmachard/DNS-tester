@@ -81,7 +81,7 @@ def main(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post_rev
                     if result["command_status"] == "ok":
                         rcode = result.get("rcode", "Unknown")
                         if rcode != "NOERROR":
-                            print(f"{server} - No valid answer (rcode: {rcode}) - {result['time_ms']} ms")
+                            print(f"\t{server} - No valid answer (rcode: {rcode}) - {result['time_ms']} ms")
                         else:
                             record_type = "PTR" if is_reverse else query_type
                             answers = [
