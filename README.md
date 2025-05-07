@@ -13,6 +13,31 @@ This tool provides a scalable solution for testing multiple DNS servers asynchro
 - Celery for task queuing and execution
 - Prometheus metrics for real-time monitoring
 - Support DNS servers from Ansible inventory
+- CLI support: display the results of the DNS lookup, including the DNS server, resolved IP addresses, TTL values, and response times.
+
+Example CLI output:
+
+```
+Starting DNS lookup for domain: github.com
+  Using DNS servers: Fetching from inventory
+  API Base URL: http://localhost:5000
+  TLS Skip Verify: False
+  Task ID: 1245-3456-6789
+
+DNS Lookup Results:
+  udp://8.8.8.8 - 15.76854ms - TTL: 300s - 216.239.32.27
+  udp://9.9.9.9 - 21.19606ms - TTL: 128s - 216.239.32.27
+  udp://9.9.9.10 - 20.19477ms - TTL: 128s - 216.239.32.27
+  tcp://8.8.8.8 - 25.51609ms - TTL: 300s - 216.239.32.27
+  udp://1.1.1.1 - 10.36629ms - TTL: 150s - 216.239.32.27
+  tcp://1.1.1.1 - 23.39788ms - TTL: 227s - 216.239.32.27
+  tcp://9.9.9.9 - 45.15521ms - TTL: 300s - 216.239.32.27
+  tcp://9.9.9.10 - 43.10374ms - TTL: 300s - 216.239.32.27
+  tls://dns9.quad9.net. - 104.73758ms - TTL: 193s - 216.239.32.27
+  tls://dns10.quad9.net. - 107.42914ms - TTL: 246s - 216.239.32.27
+  https://dns9.quad9.net. - 116.62068ms - TTL: 65s - 216.239.32.27
+  https://dns10.quad9.net. - 115.81571ms - TTL: 245s - 216.239.32.27
+```
 
 ## Installation
 
@@ -172,33 +197,6 @@ python3 cli/main.py github.com udp://8.8.8.8 --api-url http://custom-api-url:500
 #### Query a domain with insecure TLS verification:
 ```bash
 python3 cli/main.py github.com udp://8.8.8.8 --insecure
-```
-
-### Output
-
-The CLI will display the results of the DNS lookup, including the DNS server, resolved IP addresses, TTL values, and response times.
-
-Example output:
-```
-Starting DNS lookup for domain: github.com
-  Using DNS servers: Fetching from inventory
-  API Base URL: http://localhost:5000
-  TLS Skip Verify: False
-  Task ID: 1245-3456-6789
-
-DNS Lookup Results:
-  udp://8.8.8.8 - 15.76854ms - TTL: 300s - 216.239.32.27
-  udp://9.9.9.9 - 21.19606ms - TTL: 128s - 216.239.32.27
-  udp://9.9.9.10 - 20.19477ms - TTL: 128s - 216.239.32.27
-  tcp://8.8.8.8 - 25.51609ms - TTL: 300s - 216.239.32.27
-  udp://1.1.1.1 - 10.36629ms - TTL: 150s - 216.239.32.27
-  tcp://1.1.1.1 - 23.39788ms - TTL: 227s - 216.239.32.27
-  tcp://9.9.9.9 - 45.15521ms - TTL: 300s - 216.239.32.27
-  tcp://9.9.9.10 - 43.10374ms - TTL: 300s - 216.239.32.27
-  tls://dns9.quad9.net. - 104.73758ms - TTL: 193s - 216.239.32.27
-  tls://dns10.quad9.net. - 107.42914ms - TTL: 246s - 216.239.32.27
-  https://dns9.quad9.net. - 116.62068ms - TTL: 65s - 216.239.32.27
-  https://dns10.quad9.net. - 115.81571ms - TTL: 245s - 216.239.32.27
 ```
 
 ## Monitoring with Prometheus
