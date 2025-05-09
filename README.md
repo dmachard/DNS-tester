@@ -53,7 +53,7 @@ cd dns-tester
 ### Start the application with docker compose
 
 ```bash
-sudo docker compose --env-file example.env up -d
+sudo docker compose up -d
 ```
 
 ### Execute a DNS lookup
@@ -69,7 +69,6 @@ curl -X POST http://localhost:5000/dns-lookup \
         "qtype": "A",
         "tls_insecure_skip_verify": false
       }'
-
 ```
 
 Response:
@@ -83,7 +82,7 @@ Response:
 ### Check the test result
 
 ```bash
-curl http://localhost:5000/task/a19e8aed-68b5-4639-ab21-f65caf8482ac
+curl -s http://localhost:5000/tasks/a19e8aed-68b5-4639-ab21-f65caf8482ac
 ```
 
 Response:
@@ -213,7 +212,7 @@ This project includes Prometheus metrics to track DNS resolution performance.
 | `dns_query_types_count`      | Counter   | Number of queries per record type (A, AAAA, CNAME, etc.). |
 
 
-## Running Tests
+## For developpers - running unit-tests
 
 ```bash
 python3 -m venv venv
