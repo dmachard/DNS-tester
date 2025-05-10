@@ -13,16 +13,20 @@ def mock_get_task_status():
     with patch("cli.main.get_task_status") as mock_get:
         mock_get.side_effect = [
             {"task_status": "PENDING"},
-            {"task_status": "SUCCESS", "task_result": {"details": {
-                "udp://8.8.8.8": {
-                    "command_status": "ok",
-                    "rcode": "NOERROR",
-                    "time_ms": 30.5,
-                    "answers": [
-                        {"value": "93.184.216.34", "type": "A", "ttl": 300}
-                    ]
-                }
-            }}}
+            {"task_status": "SUCCESS", "task_result": {
+                "details": {
+                    "udp://8.8.8.8": {
+                        "command_status": "ok",
+                        "dns_protocol": "Do53",
+                        "rcode": "NOERROR",
+                        "time_ms": 30.5,
+                        "answers": [
+                            {"value": "93.184.216.34", "type": "A", "ttl": 300}
+                        ]
+                    }
+                },
+                "duration": 30.5,
+            }}
         ]
         yield mock_get
 
@@ -37,4 +41,4 @@ def test_main_direct_lookup(mock_post_dns_lookup, mock_get_task_status, capsys):
     
     # Assertions
     assert "mock-task-id" in captured.out
-    assert "udp://8.8.8.8 - 30.50000ms - TTL: 300s - 93.184.216.34" in captured.out
+    assert "udp://8.8.8.8 - Do53 - 30.50000ms - TTL: 300s - 93.184.216.34" in captured.out

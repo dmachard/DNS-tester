@@ -14,6 +14,7 @@ This tool provides a scalable solution for testing multiple DNS servers asynchro
 - Prometheus metrics for real-time monitoring
 - Support DNS servers from Ansible inventory
 - CLI support: display the results of the DNS lookup, including the DNS server, resolved IP addresses, TTL values, and response times.
+- DNS protocol supported: Do53, DoT, DoH and DoQ
 
 Example CLI output:
 
@@ -24,7 +25,7 @@ Starting DNS lookup for domain: github.com
   TLS Skip Verify: False
   Task ID: 1245-3456-6789
 
-DNS Lookup Results:
+DNS lookup of 12 servers completed in 0.125s:
   udp://8.8.8.8 - 15.76854ms - TTL: 300s - 216.239.32.27
   udp://9.9.9.9 - 21.19606ms - TTL: 128s - 216.239.32.27
   udp://9.9.9.10 - 20.19477ms - TTL: 128s - 216.239.32.27
@@ -96,6 +97,7 @@ Response:
       "udp://8.8.8.8:53": {
         "command_status": "ok",
         "description": "",
+        "dns_protocol": "Do53",
         "time_ms": 13.452129,
         "rcode": "NOERROR",
         "name": "example.com.",
@@ -113,6 +115,7 @@ Response:
       "tls://1.1.1.1:853": {
         "command_status": "ok",
         "description": "",
+        "dns_protocol": "DoT",
         "time_ms": 128.041827,
         "rcode": "NOERROR",
         "name": "example.com.",

@@ -24,9 +24,23 @@ TYPE_MAPPING = {
     28: "AAAA"
 }
 
+PROTOCOL_MAPPING = {
+    "udp://": "Do53",
+    "tcp://": "Do53",
+    "tls://": "DoT",
+    "https://": "DoH",
+    "quic://": "DoQ",
+}
+
 dnstester_logger = logging.getLogger('dnstester')
 
-
+def get_dns_protocol_from_target(target: str) -> str:
+    try:
+        scheme = target.split("://")[0] + "://"
+        return PROTOCOL_MAPPING.get(scheme, "Unknown")
+    except Exception:
+        return "Unknown"
+    
 def _query_server(domain, qtype, server, tls_insecure_skip_verify, retries=3):
     result = {}
     try:
@@ -42,7 +56,7 @@ def _query_server(domain, qtype, server, tls_insecure_skip_verify, retries=3):
             cmd.append("--http2")
         if tls_insecure_skip_verify:
             cmd.append("--tls-insecure-skip-verify")
-
+                        
         dnstester_logger.debug(f"Executing command: {' '.join(cmd)}")
         for attempt in range(retries):
             process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -71,6 +85,7 @@ def _query_server(domain, qtype, server, tls_insecure_skip_verify, retries=3):
                     qtype_text = TYPE_MAPPING.get(qtype_num, "Unknown")
 
                     formatted_output = {
+                        "dns_protocol": get_dns_protocol_from_target(server["target"]),
                         "description": server.get("description", ""),
                         "rcode": rcode_text,
                         "name": first_output["queries"][0]["question"][0]["name"] if first_output.get("queries") else "Unknown",
