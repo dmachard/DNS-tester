@@ -96,7 +96,7 @@ Response:
     "details": {
       "udp://8.8.8.8:53": {
         "command_status": "ok",
-        "description": "",
+        "tags": "",
         "dns_protocol": "Do53",
         "time_ms": 13.452129,
         "rcode": "NOERROR",
@@ -114,7 +114,7 @@ Response:
       },
       "tls://1.1.1.1:853": {
         "command_status": "ok",
-        "description": "",
+        "tags": "",
         "dns_protocol": "DoT",
         "time_ms": 128.041827,
         "rcode": "NOERROR",
@@ -145,16 +145,16 @@ Example inventory:
 
 ```
 [dns]
-google1 dns_address="8.8.8.8" domain_name="" services="do53" details="DNS GOOGLE"
-quad9 dns_address="9.9.9.9" domain_name="dns9.quad9.net." services="do53, dot, doh" details="DNS QUAD9"
-cloudflare dns_address="1.1.1.1" domain_name="" services="do53" details="DNS CLOUDFLARE"
+google1 dns_address="8.8.8.8" domain_name="" services="do53" tags="GOOGLE"
+quad9 dns_address="9.9.9.9" domain_name="dns9.quad9.net." services="do53, dot, doh" tags="QUAD9, ALLPROTOCOL"
+cloudflare dns_address="1.1.1.1" domain_name="" services="do53" tags="CLOUDFLARE"
 ```
 
 Each host entry must define:
   - dns_address (required): IP address of the DNS server
   - domain_name (optional): FQDN used for protocols like DoT/DoH
   - services (optional): Comma-separated list of supported protocols (do53, dot, doh)
-  - details (optional): Description of the DNS provider
+  - tags (optional): Tags for the DNS provider
 
 This allows for flexible and centralized DNS configuration management using existing Ansible setups.
 

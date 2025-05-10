@@ -45,14 +45,14 @@ def test_run_q_success(mock_popen):
     mock_process.returncode = 0
     mock_popen.return_value = mock_process
 
-    result = run_q("example.com", "A", [ {"target": "udp://8.8.8.8", "description": "test"} ], False)
+    result = run_q("example.com", "A", [ {"target": "udp://8.8.8.8", "tags": "test"} ], False)
 
     # Check if server key exists in results
     assert "udp://8.8.8.8" in result
     server_result = result["udp://8.8.8.8"]
 
     assert server_result["command_status"] == "ok"
-    assert server_result["description"] == "test"
+    assert server_result["tags"] == "test"
     assert server_result["time_ms"] == 12
     assert server_result["rcode"] == "NOERROR"
     assert server_result["name"] == "example.com."

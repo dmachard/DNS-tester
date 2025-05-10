@@ -86,7 +86,7 @@ def _query_server(domain, qtype, server, tls_insecure_skip_verify, retries=3):
 
                     formatted_output = {
                         "dns_protocol": get_dns_protocol_from_target(server["target"]),
-                        "description": server.get("description", ""),
+                        "tags": server.get("tags", ""),
                         "rcode": rcode_text,
                         "name": first_output["queries"][0]["question"][0]["name"] if first_output.get("queries") else "Unknown",
                         "qtype": qtype_text,

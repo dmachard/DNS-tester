@@ -5,7 +5,7 @@ from typing import List, Dict, Literal, Optional
 ALLOWED_PROTOCOLS = ("udp://", "tcp://", "https://", "quic://", "tls://")
 class DNSServer(BaseModel):
     target: str = Field(..., description="DNS server target with protocol")
-    description: Optional[str] = Field(None, description="Optional description of the DNS server")
+    tags: Optional[str] = Field(None, description="Optional tags for the DNS server")
 
     @field_validator('target')
     @classmethod
@@ -36,7 +36,7 @@ class DNSLookupResult(BaseModel):
     """Represents the result of a DNS lookup request."""
     command_status: str = Field(..., description="Status of the DNS command execution (ok/error).")
     time_ms: Optional[float] = Field(None, description="Time taken for the DNS query in milliseconds.")
-    description: Optional[str] = Field(None, description="DNS server description.")
+    tags: Optional[str] = Field(None, description="Some tags for description.")
     rcode: Optional[str] = Field(None, description="Response code (e.g., NoError, NXDomain, etc.).")
     name: Optional[str] = Field(None, description="The queried domain name.")
     qtype: Optional[str] = Field(None, description="Query type (A, AAAA, CNAME, etc.).")
