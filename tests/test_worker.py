@@ -1,7 +1,9 @@
 import json
+import pytest
 
 from unittest.mock import patch, MagicMock
 from worker.q import run_q
+from worker.q import get_dns_protocol_from_target
 
 MOCK_Q_SUCCESS_OUTPUT = b'''
 [
@@ -72,3 +74,18 @@ def test_run_q_success(mock_popen):
     assert answer["type"] == "CNAME"
     assert answer["ttl"] == 300
     assert answer["value"] == "pointer.example.com."
+
+
+
+@pytest.mark.parametrize("target,expected", [
+    ("udp://8.8.8.8:53", "Do53"),
+    ("tcp://1.1.1.1", "Do53"),
+    ("tls://dns.example.com", "DoT"),
+    ("https://dns.google", "DoH"),
+    ("quic://9.9.9.9", "DoQ"),
+    ("ftp://example.com", "Unknown"),
+    ("no-protocol.com", "Unknown"),
+    ("", "Unknown"),
+])
+def test_get_dns_protocol_from_target(target, expected):
+    assert get_dns_protocol_from_target(target) == expected

@@ -42,6 +42,7 @@ class DNSLookupResult(BaseModel):
     qtype: Optional[str] = Field(None, description="Query type (A, AAAA, CNAME, etc.).")
     answers: Optional[List[DNSAnswer]] = Field(None, description="List of DNS answer records.")
     error: Optional[str] = Field(None, description="Error message if the query failed.")
+    dns_protocol: Optional[str] = Field(None, description="DNS protocol (e.g., Do53, DoT, DoH and DoQ).")
 
 class DNSLookupResults(BaseModel):
     """Encapsulates the details and duration of the DNS lookup results."""

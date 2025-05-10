@@ -76,8 +76,9 @@ def main(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post_rev
         while True:
             task_status = get_task_status_func(task_id)
             if task_status["task_status"] == "SUCCESS":
-                print("\nDNS Lookup Results:")
+                print("\nDNS lookup of %d servers completed in %.4fs:" % (len(task_status["task_result"]["details"]), task_status["task_result"]["duration"]) )
                 for server, result in task_status["task_result"]["details"].items():
+                    dns_protocol = result["dns_protocol"]
                     if result["command_status"] == "ok":
                         rcode = result.get("rcode", "Unknown")
                         if rcode != "NOERROR":
@@ -95,15 +96,15 @@ def main(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post_rev
                                 time_ms = result["time_ms"]
 
                                 if len(set(ttl_list)) == 1:
-                                    print(f"\t{server} - {time_ms:.5f}ms - TTL: {ttl_list[0]}s - {', '.join(values)}")
+                                    print(f"\t{server} - {dns_protocol} - {time_ms:.5f}ms - TTL: {ttl_list[0]}s - {', '.join(values)}")
                                 else:
                                     value_with_ttl = [f"{ip} (TTL: {ttl})" for ip, ttl in answers]
-                                    print(f"\t{server} - {time_ms:.5f}ms - {', '.join(value_with_ttl)}")
+                                    print(f"\t{server} - {dns_protocol} - {time_ms:.5f}ms - {', '.join(value_with_ttl)}")
                             else:
-                                print(f"\t{server} - No {record_type} records found - {result['time_ms']} ms")
+                                print(f"\t{server} - {dns_protocol} - No {record_type} records found - {result['time_ms']} ms")
                     else:
                         rcode = result.get("rcode", "Unknown")
-                        print(f"\t- {server} - Error: {result['error']} (rcode: {rcode})")
+                        print(f"\t- {server} - {dns_protocol} - Error: {result['error']} (rcode: {rcode})")
                 break
             elif task_status["task_status"] == "FAILURE":
                 print("\tTask failed.")

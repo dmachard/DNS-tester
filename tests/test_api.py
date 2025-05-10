@@ -89,6 +89,7 @@ def test_get_tasks_status(mock_async_result):
             "details": {
                 "udp://8.8.8.8:53": {
                     "command_status": "ok",
+                    "dns_protocol": "Do53",
                     "description": "",
                     "time_ms": 13.9,
                     "rcode": "NoError",
@@ -119,6 +120,7 @@ def test_get_tasks_status(mock_async_result):
                     "command_status": "ok",
                     "error": None,
                     "description": "",
+                    "dns_protocol": "Do53",
                     "time_ms": 13.9,
                     "rcode": "NoError",
                     "name": "example.com.",
