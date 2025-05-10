@@ -15,50 +15,60 @@ def test_health_check():
 def test_post_dnslookup_return_taskid(mock_celery):
     data = {
         "domain": "example.com",
-        "dns_servers": [ {"target": "udp://8.8.8.8:53", "description": ""}, {"target": "tls://1.1.1.1:853", "description": ""}],
+        "dns_servers": [ {"target": "udp://8.8.8.8:53", "tags": ""},
+                         {"target": "tls://1.1.1.1:853", "tags": ""}],
         "qtype": "A"
     }
     response = client.post("/dns-lookup", json=data)
 
     assert response.status_code == 200
     assert response.json() == {"task_id": "fake-task-id", "message": "DNS lookup enqueued"}
-    mock_celery.assert_called_once_with("example.com", "A", [{"target": "udp://8.8.8.8:53", "description": ""}, {"target": "tls://1.1.1.1:853", "description": ""}], False)
+    mock_celery.assert_called_once_with("example.com", "A", 
+                                        [{"target": "udp://8.8.8.8:53", "tags": ""}, 
+                                         {"target": "tls://1.1.1.1:853", "tags": ""}], 
+                                    False)
 
 @patch("worker.lookup.lookup_dns.delay", return_value=MagicMock(id="fake-task-id"))
 def test_post_reverselookup_return_taskid(mock_celery):
     data = {
         "reverse_ip": "1.1.1.1",
-        "dns_servers": [ {"target": "udp://8.8.8.8:53", "description": ""}]
+        "dns_servers": [ {"target": "udp://8.8.8.8:53", "tags": ""}]
     }
     response = client.post("/reverse-lookup", json=data)
 
     assert response.status_code == 200
     assert response.json() == {"task_id": "fake-task-id", "message": "Reverse DNS lookup enqueued"}
-    mock_celery.assert_called_once_with("1.1.1.1", "PTR", [{"target": "udp://8.8.8.8:53", "description": ""}], False)
+    mock_celery.assert_called_once_with("1.1.1.1", "PTR", [
+        {"target": "udp://8.8.8.8:53", "tags": ""}], False)
 
 @pytest.mark.parametrize("valid_qtype", ["A", "AAAA", "CNAME", "PTR", "TXT"])
 @patch("worker.lookup.lookup_dns.delay", return_value=MagicMock(id="fake-task-id"))
 def test_post_dnslookup_valid_qtype(mock_celery, valid_qtype):
     response = client.post(
         "/dns-lookup",
-        json={"domain": "example.com", "dns_servers": [ {"target": "udp://8.8.8.8:53", "description": ""} ], "qtype": valid_qtype}
+        json={"domain": "example.com", "dns_servers": [ 
+            {"target": "udp://8.8.8.8:53", "tags": ""} ], "qtype": valid_qtype}
     )
     assert response.status_code == 200
     assert "task_id" in response.json()
-    mock_celery.assert_called_once_with("example.com", valid_qtype, [{"target": "udp://8.8.8.8:53", "description": ""}], False)
+    mock_celery.assert_called_once_with("example.com", valid_qtype, [
+        {"target": "udp://8.8.8.8:53", "tags": ""}], False)
 
 @pytest.mark.parametrize("invalid_qtype", ["MX", "SRV", "WRONG_TYPE", "123"])
 @patch("worker.lookup.lookup_dns.delay", return_value=MagicMock(id="fake-task-id"))
 def test_post_dnslookup_invalid_qtype(mock_celery, invalid_qtype):
     response = client.post(
         "/dns-lookup",
-        json={"domain": "example.com", "dns_servers": [ {"target": "udp://8.8.8.8:53"} ], "qtype": invalid_qtype}
+        json={"domain": "example.com", "dns_servers": [ 
+            {"target": "udp://8.8.8.8:53"} ], "qtype": invalid_qtype}
     )
     assert response.status_code == 422
     assert "detail" in response.json()
 
 @pytest.mark.parametrize("valid_server", [
-    {"target": "udp://8.8.8.8:53"}, {"target": "tcp://1.1.1.1"},  {"target": "https://dns.google"}, {"target": "quic://9.9.9.9"}, {"target": "tls://dns.cloudflare.com"}
+    {"target": "udp://8.8.8.8:53"}, {"target": "tcp://1.1.1.1"}, 
+    {"target": "https://dns.google"}, {"target": "quic://9.9.9.9"},
+    {"target": "tls://dns.cloudflare.com"}
 ])
 @patch("worker.lookup.lookup_dns.delay", return_value=MagicMock(id="fake-task-id"))
 def test_post_dnslookup_valid_dns_server(mock_celery, valid_server):
@@ -70,7 +80,9 @@ def test_post_dnslookup_valid_dns_server(mock_celery, valid_server):
     assert "task_id" in response.json()
 
 @pytest.mark.parametrize("invalid_server", [
-    {"target": "8.8.8.8"},  {"target": "1.1.1.1:53"},  {"target": "ftp://8.8.8.8"}, {"target": "dns.google"}, {"target": "://9.9.9.9"}      
+    {"target": "8.8.8.8"},  {"target": "1.1.1.1:53"}, 
+    {"target": "ftp://8.8.8.8"}, {"target": "dns.google"},
+    {"target": "://9.9.9.9"}      
 ])
 @patch("worker.lookup.lookup_dns.delay", return_value=MagicMock(id="fake-task-id"))
 def test_post_dnslookup_invalid_dns_server(mock_celery, invalid_server):
@@ -90,7 +102,7 @@ def test_get_tasks_status(mock_async_result):
                 "udp://8.8.8.8:53": {
                     "command_status": "ok",
                     "dns_protocol": "Do53",
-                    "description": "",
+                    "tags": "",
                     "time_ms": 13.9,
                     "rcode": "NoError",
                     "name": "example.com.",
@@ -119,7 +131,7 @@ def test_get_tasks_status(mock_async_result):
                 "udp://8.8.8.8:53": {
                     "command_status": "ok",
                     "error": None,
-                    "description": "",
+                    "tags": "",
                     "dns_protocol": "Do53",
                     "time_ms": 13.9,
                     "rcode": "NoError",

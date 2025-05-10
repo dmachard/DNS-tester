@@ -23,7 +23,7 @@ def read_hosts_from_inventory(inventory_path):
                     'dns_address': host_vars.get('dns_address'),
                     'domain_name': host_vars.get('domain_name'),
                     'services': host_vars.get('services'),
-                    'details': host_vars.get('details'),
+                    'tags': host_vars.get('tags'),
                 }
                 dns_servers.append(dns_info)
     except subprocess.CalledProcessError as e:
@@ -38,26 +38,26 @@ def get_dns_servers_from_ansible(inventory_path='/app/ansible_hosts.ini'):
     for dns_server in dns_servers:
         dns_address = dns_server.get('dns_address')
         domain_name = dns_server.get('domain_name')
-        description = dns_server.get('details')
+        tags = dns_server.get('tags')
         supported_services = dns_server.get('services', '').split(',')
 
         for service in supported_services:
             if service.strip() == 'do53':
-                dns_info = { "target": f"udp://{dns_address}", "description": description }
+                dns_info = { "target": f"udp://{dns_address}", "tags": tags }
                 dns_info_list.append(dns_info)
-                dns_info = { "target": f"tcp://{dns_address}", "description": description }
+                dns_info = { "target": f"tcp://{dns_address}", "tags": tags }
                 dns_info_list.append(dns_info)
             elif service.strip() == 'doh':
                 if domain_name:
-                    dns_info = { "target": f"https://{domain_name}", "description": description }
+                    dns_info = { "target": f"https://{domain_name}", "tags": tags }
                 else:
-                    dns_info = { "target": f"https://{dns_address}", "description": description }
+                    dns_info = { "target": f"https://{dns_address}", "tags": tags }
                 dns_info_list.append(dns_info)
             elif service.strip() == 'dot':
                 if domain_name:
-                    dns_info = { "target": f"tls://{domain_name}", "description": description }
+                    dns_info = { "target": f"tls://{domain_name}", "tags": tags }
                 else:
-                    dns_info = { "target": f"tls://{dns_address}", "description": description }
+                    dns_info = { "target": f"tls://{dns_address}", "tags": tags }
                 dns_info_list.append(dns_info)
 
     return dns_info_list
