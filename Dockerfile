@@ -27,11 +27,13 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY ./scripts/dnstester-cli.sh /usr/local/bin/dnstester-cli
+RUN pip install --no-cache-dir -r requirements.txt && \
+    useradd --create-home --shell /bin/bash dnstester && \
+    chmod +x /usr/local/bin/dnstester-cli && \
+    chown dnstester:dnstester /usr/local/bin/dnstester-cli
 
-RUN useradd --create-home --shell /bin/bash dnstester
 USER dnstester
-
 COPY --chown=dnstester:dnstester . .
 
 CMD ["uvicorn", "api.app:app", "--host", "0.0.0.0", "--port", "5000"]

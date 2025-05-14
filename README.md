@@ -14,7 +14,7 @@ This tool provides a scalable solution for testing multiple DNS servers asynchro
 - Prometheus metrics for real-time monitoring
 - Support DNS servers from Ansible inventory
 - CLI support: display the results of the DNS lookup, including the DNS server, resolved IP addresses, TTL values, and response times.
-- DNS protocol supported: Do53, DoT, DoH and DoQ
+- DNS protocol supported: Do53 (udp:// or tcp://), DoT (tls://), DoH (https://) and DoQ (quic://)
 
 Example CLI output:
 
@@ -166,10 +166,10 @@ The DNS Tester includes a CLI tool for performing DNS lookups directly from the 
 
 ### Running the CLI
 
-To use the CLI, run the following command:
+To use the CLI from docker image, run the following command:
 
 ```bash
-python3 cli/main.py <domain> [dns_servers...] [--qtype <query_type>] [--api-url <api_url>] [--insecure]
+sudo docker compose exec api dnstester-cli <domain> [dns_servers...] [--qtype <query_type>] [--api-url <api_url>] [--insecure]
 ```
 
 ### Arguments
@@ -184,22 +184,22 @@ python3 cli/main.py <domain> [dns_servers...] [--qtype <query_type>] [--api-url 
 
 #### Query a domain or IP using specific DNS servers:
 ```bash
-python3 cli/main.py github.com udp://8.8.8.8 udp://1.1.1.1 --qtype A
+sudo docker compose exec api dnstester-cli github.com udp://8.8.8.8 udp://1.1.1.1 --qtype A
 ```
 
 #### Query a domain without specifying DNS servers (fetch from inventory):
 ```bash
-python3 cli/main.py github.com --qtype AAAA
+sudo docker compose exec api dnstester-cli github.com --qtype AAAA
 ```
 
 #### Query a domain with a custom API URL:
 ```bash
-python3 cli/main.py github.com udp://8.8.8.8 --api-url http://custom-api-url:5000
+sudo docker compose exec api dnstester-cli github.com udp://8.8.8.8 --api-url http://custom-api-url:5000
 ```
 
 #### Query a domain with insecure TLS verification:
 ```bash
-python3 cli/main.py github.com udp://8.8.8.8 --insecure
+sudo docker compose exec api dnstester-cli github.com udp://8.8.8.8 --insecure
 ```
 
 ## Monitoring with Prometheus
