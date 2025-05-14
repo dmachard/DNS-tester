@@ -1,5 +1,7 @@
 
-# Execute a DNS lookup
+# API Usage
+
+## Execute a DNS lookup
 
 The swagger is available at http://localhost:5000/docs#
 
@@ -22,7 +24,7 @@ Response:
 }
 ```
 
-# Check the test result
+## Check the test result
 
 ```bash
 curl -s http://localhost:5000/tasks/a19e8aed-68b5-4639-ab21-f65caf8482ac
