@@ -1,0 +1,8 @@
+services:
+  api:
+    build:
+      context: .
+
+  worker:
+    build:
+      context: .
