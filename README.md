@@ -24,20 +24,21 @@ Starting DNS lookup for domain: github.com
   API Base URL: http://localhost:5000
   TLS Skip Verify: False
   Task ID: 1245-3456-6789
+  Waiting for task to complete...
 
-DNS lookup of 12 servers completed in 0.125s:
-  udp://8.8.8.8 - Do53 - 15.76854ms - TTL: 300s - 216.239.32.27
-  udp://9.9.9.9 - Do53 - 21.19606ms - TTL: 128s - 216.239.32.27
-  udp://9.9.9.10 - Do53 - 20.19477ms - TTL: 128s - 216.239.32.27
-  tcp://8.8.8.8 - Do53 - 25.51609ms - TTL: 300s - 216.239.32.27
-  udp://1.1.1.1 - Do53 - 10.36629ms - TTL: 150s - 216.239.32.27
-  tcp://1.1.1.1 - Do53 - 23.39788ms - TTL: 227s - 216.239.32.27
-  tcp://9.9.9.9 - Do53 - 45.15521ms - TTL: 300s - 216.239.32.27
-  tcp://9.9.9.10 - Do53 - 43.10374ms - TTL: 300s - 216.239.32.27
-  tls://dns9.quad9.net. - DoT - 104.73758ms - TTL: 193s - 216.239.32.27
-  tls://dns10.quad9.net. - DoT - 107.42914ms - TTL: 246s - 216.239.32.27
-  https://dns9.quad9.net. - DoH- 116.62068ms - TTL: 65s - 216.239.32.27
-  https://dns10.quad9.net. - DoH - 115.81571ms - TTL: 245s - 216.239.32.27
+DNS lookup of 12 servers completed in 0.2900s:
+    udp://1.1.1.1 - Do53 - 14.91580ms - TTL: 59s - 140.82.121.4
+    tcp://1.1.1.1 - Do53 - 22.73039ms - TTL: 18s - 140.82.121.4
+    udp://8.8.8.8 - Do53 - 36.54281ms - TTL: 60s - 140.82.121.3
+    tcp://8.8.8.8 - Do53 - 36.22145ms - TTL: 60s - 140.82.121.3
+    udp://9.9.9.10 - Do53 - 25.82462ms - TTL: 27s - 140.82.121.4
+    tcp://9.9.9.10 - Do53 - 46.67132ms - TTL: 10s - 140.82.121.4
+    udp://9.9.9.9 - Do53 - 25.31037ms - TTL: 46s - 140.82.121.4
+    tcp://9.9.9.9 - Do53 - 41.68741ms - TTL: 27s - 140.82.121.4
+    https://dns10.quad9.net - DoH - 238.26471ms - TTL: 60s - 140.82.121.4
+    tls://dns10.quad9.net - DoT - 232.89234ms - TTL: 1s - 140.82.121.3
+    https://dns9.quad9.net - DoH - 234.11824ms - TTL: 5s - 140.82.121.4
+    tls://dns9.quad9.net - DoT - 278.54105ms - TTL: 58s - 140.82.121.4
 ```
 
 ## Installation

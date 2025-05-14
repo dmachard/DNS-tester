@@ -1,6 +1,7 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from cli.main import main
+from cli.main import validate_address
 
 @pytest.fixture
 def mock_post_dns_lookup():
@@ -42,3 +43,22 @@ def test_main_direct_lookup(mock_post_dns_lookup, mock_get_task_status, capsys):
     # Assertions
     assert "mock-task-id" in captured.out
     assert "udp://8.8.8.8 - Do53 - 30.50000ms - TTL: 300s - 93.184.216.34" in captured.out
+
+def test_validate_address_valid_inputs():
+    assert validate_address("udp://8.8.8.8") == "8.8.8.8"
+    assert validate_address("tcp://1.1.1.1:53") == "1.1.1.1"
+    assert validate_address("https://dns.google") == "dns.google"
+    assert validate_address("tls://one.one.one.one") == "one.one.one.one"
+    assert validate_address("quic://example.com:853") == "example.com"
+
+def test_validate_address_invalid_inputs():
+    invalid_inputs = [
+        "ftp://8.8.8.8",
+        "just-a-string",
+        "://missing.scheme",
+        "udp//missing-colon.com",
+        "udp:/one-slash.com",
+    ]
+    for invalid in invalid_inputs:
+        with pytest.raises(ValueError, match="invalid server address format"):
+            validate_address(invalid)
