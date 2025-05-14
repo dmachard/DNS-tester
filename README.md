@@ -40,7 +40,7 @@ Features:
 >     tls://dns10.quad9.net - DoT - 232.89234ms - TTL: 1s - 140.82.121.3
 >     https://dns9.quad9.net - DoH - 234.11824ms - TTL: 5s - 140.82.121.4
 >     tls://dns9.quad9.net - DoT - 278.54105ms - TTL: 58s - 140.82.121.4
-```
+> ```
 
 ## 🚀 Getting Started
 
