@@ -17,6 +17,7 @@ jobs:
       run: |
         VERSION=$(echo "${{ github.event.release.tag_name }}" | cut -c2-)
         sed -i "s/PACKAGE_VERSION = \".*\"/PACKAGE_VERSION = \"$VERSION\"/" cli/version.py
+        echo cli/version.py
 
     - name: Build the Docker image
       run: |
