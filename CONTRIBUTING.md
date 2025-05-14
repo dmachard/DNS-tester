@@ -16,8 +16,8 @@ Before opening a pull request, please read the following guidelines to ensure sm
 
 To run the development version of the stack using the docker-compose.dev.yml file (includes building images locally):
 
-```
-sudo docker compose -f docker-compose.dev.yml up --build
+```bash
+sudo docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
 ```
 
 This will:

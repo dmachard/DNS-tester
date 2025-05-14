@@ -15,7 +15,7 @@ services:
     restart: unless-stopped
 
   api:
-    build: .
+    image: dmachard/dnstester:latest
     ports:
       - "5000:5000"
     env_file:
@@ -30,7 +30,7 @@ services:
     restart: unless-stopped
 
   worker:
-    build: .
+    image: dmachard/dnstester:latest
     env_file:
       - ./conf/example.env
     depends_on:
