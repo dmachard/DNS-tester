@@ -1,9 +1,13 @@
 
 # API Usage
 
+You can explore and test the API using the Swagger UI:
+- Locally: http://localhost:5000/docs#
+- Online (via Swagger Viewer): https://petstore.swagger.io/?url=https://raw.githubusercontent.com/dmachard/DNS-tester/refs/heads/update_dockercompose/docs/openapi.json
+
 ## Execute a DNS lookup
 
-The swagger is available at http://localhost:5000/docs#
+To initiate a DNS test via the REST API:
 
 ```bash
 curl -X POST http://localhost:5000/dns-lookup \
@@ -16,7 +20,8 @@ curl -X POST http://localhost:5000/dns-lookup \
       }'
 ```
 
-Response:
+Response (lookup request accepted and queued):
+
 ```json
 {
   "task_id": "a19e8aed-68b5-4639-ab21-f65caf8482ac",
@@ -24,13 +29,21 @@ Response:
 }
 ```
 
-## Check the test result
+## Retrieve DNS Test Results
+
+Once the lookup is complete, query the result using the task ID:
+
+Notes:
+- The query is asynchronous — results may not be immediately available.
+- command_status can help detect individual resolver failures.
+- time_ms shows how long the resolver took to respond.
 
 ```bash
 curl -s http://localhost:5000/tasks/a19e8aed-68b5-4639-ab21-f65caf8482ac
 ```
 
-Response:
+Example Response:
+
 ```json
 {
   "task_id": "30949f79-c80f-41a5-8a93-754f260472ca",
