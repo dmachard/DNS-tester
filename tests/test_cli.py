@@ -1,17 +1,18 @@
 import pytest
 from unittest.mock import patch, MagicMock
-from cli.main import main
-from cli.main import validate_address
+from cli.commands import launcher
+from cli.commands import validate_address
+from cli.version import PACKAGE_VERSION
 
 @pytest.fixture
 def mock_post_dns_lookup():
-    with patch("cli.main.post_dns_lookup") as mock_post:
+    with patch("cli.commands.post_dns_lookup") as mock_post:
         mock_post.return_value = "mock-task-id"
         yield mock_post
 
 @pytest.fixture
 def mock_get_task_status():
-    with patch("cli.main.get_task_status") as mock_get:
+    with patch("cli.commands.get_task_status") as mock_get:
         mock_get.side_effect = [
             {"task_status": "PENDING"},
             {"task_status": "SUCCESS", "task_result": {
@@ -33,9 +34,9 @@ def mock_get_task_status():
 
 def test_main_direct_lookup(mock_post_dns_lookup, mock_get_task_status, capsys):
     # Simulate command-line arguments
-    with patch("sys.argv", ["main.py", "example.com", "udp://8.8.8.8", "--qtype", "A"]):
+    with patch("sys.argv", ["example.com", "udp://8.8.8.8", "--qtype", "A"]):
         # Pass mocked functions to main
-        main(post_dns_lookup_func=mock_post_dns_lookup, get_task_status_func=mock_get_task_status)
+        launcher(post_dns_lookup_func=mock_post_dns_lookup, get_task_status_func=mock_get_task_status)
     
     # Capture the output
     captured = capsys.readouterr()
@@ -62,3 +63,13 @@ def test_validate_address_invalid_inputs():
     for invalid in invalid_inputs:
         with pytest.raises(ValueError, match="invalid server address format"):
             validate_address(invalid)
+
+def test_cli_version_flag(capsys):
+    with patch("sys.argv", ["--version"]):
+        with pytest.raises(SystemExit) as excinfo:
+            launcher()
+
+        assert excinfo.value.code == 0
+
+    captured = capsys.readouterr()
+    assert f"DNS Tester - version {PACKAGE_VERSION}" in captured.out

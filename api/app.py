@@ -4,6 +4,8 @@ import logging
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import Response
 
+from cli.version import API_VERSION
+
 from worker.lookup import lookup_dns as celery_lookup_dns
 from worker.lookup import get_metrics as celery_get_metrics
 
@@ -11,11 +13,10 @@ from api.models import DNSLookup, ReverseDNSLookup, DNSLookupStatus
 from api.ansible import get_dns_servers_from_ansible
 
 dnstester_logger = logging.getLogger('dnstester')
-api_version = os.getenv('API_VERSION', '0.0.0')
 
 app = FastAPI(
     title="DNS Tester API",
-    version=api_version
+    version=API_VERSION,
 )
 
 @app.post("/dns-lookup")
