@@ -2,6 +2,7 @@ import time
 import requests
 import argparse
 import ipaddress
+import re
 
 API_BASE_URL = "http://localhost:5000"
 
@@ -37,13 +38,19 @@ def validate_ip(ip_string):
         return True
     except ValueError:
         return False
-    
+
+def validate_address(server_address):
+    match = re.match(r'^(udp|tcp|tls|https|quic)://([^:/]+)', server_address)
+    if not match:
+        raise ValueError(f"invalid server address format: {server_address}")
+    return match.group(2)
+
 def main(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post_reverse_lookup, get_task_status_func=get_task_status):
     global API_BASE_URL
 
     parser = argparse.ArgumentParser(description="CLI for testing DNS lookup.")
     parser.add_argument("query", help="Domain name to query.")
-    parser.add_argument("dns_servers", nargs="*", help="List of DNS servers (e.g., udp://8.8.8.8). If not provided, servers will be fetched from inventory.")
+    parser.add_argument("dns_servers", nargs="*", help="List of DNS servers (e.g., udp://8.8.8.8 or tcp://..., tls://...). If not provided, servers will be fetched from inventory.")
     parser.add_argument("--qtype", default="A", choices=["A", "AAAA"], help="DNS query type (default: A).")
     parser.add_argument("--reverse", "-r", action="store_true", help="Perform a reverse DNS lookup (PTR record).")
     parser.add_argument("--api-url", default=API_BASE_URL, help="Base URL of the API (default: http://localhost:5000).")
@@ -61,6 +68,13 @@ def main(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post_rev
         print(f"Starting DNS lookup for domain: {args.query}")
         query_type = args.qtype
 
+    try:
+        for dns_server in args.dns_servers:
+            validate_address(dns_server)
+    except ValueError as e:
+        print(f"Error > {e}")
+        return
+
     print(f"\tUsing DNS servers: {', '.join(args.dns_servers) if args.dns_servers else 'Fetching from inventory'}")
     print(f"\tQuery type: {query_type}")
     print(f"\tAPI Base URL: {API_BASE_URL}")
@@ -77,7 +91,13 @@ def main(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post_rev
             task_status = get_task_status_func(task_id)
             if task_status["task_status"] == "SUCCESS":
                 print("\nDNS lookup of %d servers completed in %.4fs:" % (len(task_status["task_result"]["details"]), task_status["task_result"]["duration"]) )
-                for server, result in task_status["task_result"]["details"].items():
+                
+                sorted_servers = sorted(
+                    task_status["task_result"]["details"].items(),
+                    key=lambda item: (validate_address(item[0]), item[1].get("dns_protocol", "unknown"))
+                )
+
+                for server, result in sorted_servers:
                     dns_protocol = result["dns_protocol"]
                     if result["command_status"] == "ok":
                         rcode = result.get("rcode", "Unknown")
