@@ -13,18 +13,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Update package version in cli/version.py
+    - name: Patch version temporarily
       run: |
-        VERSION=$(echo ${{ github.event.release.tag_name }} | cut -c2-)
+        VERSION=$(echo "${{ github.event.release.tag_name }}" | cut -c2-)
         sed -i "s/PACKAGE_VERSION = \".*\"/PACKAGE_VERSION = \"$VERSION\"/" cli/version.py
-
-    - name: Commit version change
-      run: |
-        git config --global user.name "GitHub Actions"
-        git config --global user.email "actions@github.com"
-        git add cli/version.py
-        git commit -m "Update version to ${{ github.event.release.tag_name }}"
-        git push origin HEAD:${{ github.event.release.target_commitish }}
 
     - name: Build the Docker image
       run: |
