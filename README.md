@@ -7,225 +7,61 @@
   <img src="docs/logo-dns-tester.png" alt="DNS-collector"/>
 </p>
 
-This tool provides a scalable solution for testing multiple DNS servers asynchronously. It uses:
-- FastAPI for the REST API
-- Redis as a message broker
-- Celery for task queuing and execution
-- Prometheus metrics for real-time monitoring
-- Support DNS servers from Ansible inventory
-- CLI support: display the results of the DNS lookup, including the DNS server, resolved IP addresses, TTL values, and response times.
-- DNS protocol supported: Do53 (udp:// or tcp://), DoT (tls://), DoH (https://) and DoQ (quic://)
+`DNS Tester` is a scalable and asynchronous tool for testing and monitoring multiple DNS servers, with support for modern DNS protocols, CLI automation, and observability.
 
-Example CLI output:
+Features:
+- 🌐 REST API built with FastAPI
+- 📦 Asynchronous processing using Redis and Celery
+- 🧪 CLI to test DNS resolution with detailed output (IP, TTL, response time, etc.)
+- 🧾 Integration with static Ansible inventory for DNS server config
+- 📊 Built-in Prometheus metrics for performance and health monitoring
+- 🛡️ Supports multiple DNS protocols: Do53 (UDP/TCP), DoT (TLS), DoH (HTTPS), and DoQ (QUIC)
 
-```
-Starting DNS lookup for domain: github.com
-  Using DNS servers: Fetching from inventory
-  API Base URL: http://localhost:5000
-  TLS Skip Verify: False
-  Task ID: 1245-3456-6789
-  Waiting for task to complete...
-
-DNS lookup of 12 servers completed in 0.2900s:
-    udp://1.1.1.1 - Do53 - 14.91580ms - TTL: 59s - 140.82.121.4
-    tcp://1.1.1.1 - Do53 - 22.73039ms - TTL: 18s - 140.82.121.4
-    udp://8.8.8.8 - Do53 - 36.54281ms - TTL: 60s - 140.82.121.3
-    tcp://8.8.8.8 - Do53 - 36.22145ms - TTL: 60s - 140.82.121.3
-    udp://9.9.9.10 - Do53 - 25.82462ms - TTL: 27s - 140.82.121.4
-    tcp://9.9.9.10 - Do53 - 46.67132ms - TTL: 10s - 140.82.121.4
-    udp://9.9.9.9 - Do53 - 25.31037ms - TTL: 46s - 140.82.121.4
-    tcp://9.9.9.9 - Do53 - 41.68741ms - TTL: 27s - 140.82.121.4
-    https://dns10.quad9.net - DoH - 238.26471ms - TTL: 60s - 140.82.121.4
-    tls://dns10.quad9.net - DoT - 232.89234ms - TTL: 1s - 140.82.121.3
-    https://dns9.quad9.net - DoH - 234.11824ms - TTL: 5s - 140.82.121.4
-    tls://dns9.quad9.net - DoT - 278.54105ms - TTL: 58s - 140.82.121.4
-```
-
-## Installation
-
-Clone the repository:
-
-```bash
-git clone https://github.com/dmachard/dns-tester.git
-cd dns-tester
+> Example output of a full DNS test executed in parallel across 12 servers using the CLI tool:
+> 
+> ```
+> Starting DNS lookup for domain: github.com
+>   Using DNS servers: Fetching from inventory
+>   API Base URL: http://localhost:5000
+>   TLS Skip Verify: False
+>   Task ID: 1245-3456-6789
+>   Waiting for task to complete...
+> 
+> DNS lookup of 12 servers completed in 0.2900s:
+>     udp://1.1.1.1 - Do53 - 14.91580ms - TTL: 59s - 140.82.121.4
+>     tcp://1.1.1.1 - Do53 - 22.73039ms - TTL: 18s - 140.82.121.4
+>     udp://8.8.8.8 - Do53 - 36.54281ms - TTL: 60s - 140.82.121.3
+>     tcp://8.8.8.8 - Do53 - 36.22145ms - TTL: 60s - 140.82.121.3
+>     udp://9.9.9.10 - Do53 - 25.82462ms - TTL: 27s - 140.82.121.4
+>     tcp://9.9.9.10 - Do53 - 46.67132ms - TTL: 10s - 140.82.121.4
+>     udp://9.9.9.9 - Do53 - 25.31037ms - TTL: 46s - 140.82.121.4
+>     tcp://9.9.9.9 - Do53 - 41.68741ms - TTL: 27s - 140.82.121.4
+>     https://dns10.quad9.net - DoH - 238.26471ms - TTL: 60s - 140.82.121.4
+>     tls://dns10.quad9.net - DoT - 232.89234ms - TTL: 1s - 140.82.121.3
+>     https://dns9.quad9.net - DoH - 234.11824ms - TTL: 5s - 140.82.121.4
+>     tls://dns9.quad9.net - DoT - 278.54105ms - TTL: 58s - 140.82.121.4
 ```
 
-## Usage
+## 🚀 Getting Started
 
-### Start the application with docker compose
+To get started quickly with Docker Compose:
 
 ```bash
 sudo docker compose up -d
-```
-
-### Execute a DNS lookup
-
-The swagger is available at http://localhost:5000/docs#
-
-```bash
-curl -X POST http://localhost:5000/dns-lookup \
-  -H "Content-Type: application/json" \
-  -d '{
-        "domain": "example.com", 
-        "dns_servers": [{"target": "udp://8.8.8.8:53"}, {"target": "tls://1.1.1.1:853"}], 
-        "qtype": "A",
-        "tls_insecure_skip_verify": false
-      }'
-```
-
-Response:
-```json
-{
-  "task_id": "a19e8aed-68b5-4639-ab21-f65caf8482ac",
-  "status": "DNS lookup enqueued"
-}
-```
-
-### Check the test result
-
-```bash
-curl -s http://localhost:5000/tasks/a19e8aed-68b5-4639-ab21-f65caf8482ac
-```
-
-Response:
-```json
-{
-  "task_id": "30949f79-c80f-41a5-8a93-754f260472ca",
-  "task_status": "SUCCESS",
-  "task_result": {
-    "duration": 0.1,
-    "details": {
-      "udp://8.8.8.8:53": {
-        "command_status": "ok",
-        "tags": "",
-        "dns_protocol": "Do53",
-        "time_ms": 13.452129,
-        "rcode": "NOERROR",
-        "name": "example.com.",
-        "qtype": "A",
-        "answers": [
-          {
-            "name": "example.com.",
-            "type": "A",
-            "ttl": 110,
-            "value": "23.192.228.80"
-          }
-        ],
-        "error": null
-      },
-      "tls://1.1.1.1:853": {
-        "command_status": "ok",
-        "tags": "",
-        "dns_protocol": "DoT",
-        "time_ms": 128.041827,
-        "rcode": "NOERROR",
-        "name": "example.com.",
-        "qtype": "A",
-        "answers": [
-          {
-            "name": "example.com.",
-            "type": "A",
-            "ttl": 193,
-            "value": "23.192.228.80"
-          }
-        ],
-        "error": null
-      }
-    }
-  }
-}
-```
-
-### Ansible Inventory Support
-
-The DNS Tester supports retrieving DNS server information from a static Ansible inventory file.
-
-When no dns_servers are explicitly provided in the request, the API loads the DNS server list from the [dns] group in the inventory.
-
-Example inventory:
-
-```
-[dns]
-google1 dns_address="8.8.8.8" domain_name="" services="do53" tags="GOOGLE"
-quad9 dns_address="9.9.9.9" domain_name="dns9.quad9.net." services="do53, dot, doh" tags="QUAD9, ALLPROTOCOL"
-cloudflare dns_address="1.1.1.1" domain_name="" services="do53" tags="CLOUDFLARE"
-```
-
-Each host entry must define:
-  - dns_address (required): IP address of the DNS server
-  - domain_name (optional): FQDN used for protocols like DoT/DoH
-  - services (optional): Comma-separated list of supported protocols (do53, dot, doh)
-  - tags (optional): Tags for the DNS provider
-
-This allows for flexible and centralized DNS configuration management using existing Ansible setups.
-
-
-## CLI Usage
-
-The DNS Tester includes a CLI tool for performing DNS lookups directly from the command line.
-
-### Running the CLI
-
-To use the CLI from docker image, run the following command:
-
-```bash
-sudo docker compose exec api dnstester-cli <domain> [dns_servers...] [--qtype <query_type>] [--api-url <api_url>] [--insecure]
-```
-
-### Arguments
-
-- `<domain>`: The domain name to query.
-- `[dns_servers...]`: A list of DNS servers to query (e.g., `udp://8.8.8.8`). If not provided, the servers will be fetched from the inventory.
-- `--qtype`: The DNS query type. Supported values are `A` (default) and `AAAA`.
-- `--api-url`: The base URL of the API (default: `http://localhost:5000`).
-- `--insecure`: Skip TLS certificate verification for secure DNS queries.
-
-### Example Usage
-
-#### Query a domain or IP using specific DNS servers:
-```bash
 sudo docker compose exec api dnstester-cli github.com udp://8.8.8.8 udp://1.1.1.1 --qtype A
 ```
 
-#### Query a domain without specifying DNS servers (fetch from inventory):
-```bash
-sudo docker compose exec api dnstester-cli github.com --qtype AAAA
-```
+For more detailed setup and usage instructions, see:
+- [API Guide](docs/API_GUIDE.md) 
+- [CLI Guide](docs/CLI_GUIDE.md) 
+- [Ansible Inventory & Prometheus Monitoring](docs/INTEGRATIONS.md)
 
-#### Query a domain with a custom API URL:
-```bash
-sudo docker compose exec api dnstester-cli github.com udp://8.8.8.8 --api-url http://custom-api-url:5000
-```
+## ❤️ Contributing
 
-#### Query a domain with insecure TLS verification:
-```bash
-sudo docker compose exec api dnstester-cli github.com udp://8.8.8.8 --insecure
-```
+Contributions are welcome!
+Please read the [Developer Guide](CONTRIBUTING.md) for local setup and testing instructions.
 
-## Monitoring with Prometheus
-
-This project includes Prometheus metrics to track DNS resolution performance.
-
-| **Metric Name**              | **Type**   | **Description** |
-|------------------------------|-----------|----------------|
-| `dns_total_queries`          | Counter   | Total number of DNS queries sent. |
-| `dns_noerror_count`          | Counter   | Count of successful queries (`NOERROR`). |
-| `dns_failure_count`          | Counter   | Count of failed queries (`NXDOMAIN`, `SERVFAIL`, etc.). |
-| `dns_response_time_seconds`  | Histogram | Tracks the distribution of DNS response times. |
-| `dns_avg_response_time`      | Gauge     | The most recent DNS response time per server. |
-| `dns_query_types_count`      | Counter   | Number of queries per record type (A, AAAA, CNAME, etc.). |
-
-
-## For developpers - running unit-tests
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-python -m pip install -r requirements.txt
-pytest tests/ -v
-```
-
-## More DNS tools ?
+## 🧰 Other DNS Tools
 
 | | |
 |:--:|------------|
