@@ -3,7 +3,7 @@
 
 You can explore and test the API using the Swagger UI:
 - Locally: http://localhost:5000/docs#
-- Online (via Swagger Viewer): https://petstore.swagger.io/?url=https://raw.githubusercontent.com/dmachard/DNS-tester/refs/heads/update_dockercompose/docs/openapi.json
+- Online (via Swagger Viewer): https://petstore.swagger.io/?url=https://raw.githubusercontent.com/dmachard/DNS-tester/refs/heads/main/docs/openapi.json
 
 ## Execute a DNS lookup
 
