@@ -48,7 +48,7 @@ To get started quickly with Docker Compose:
 
 ```bash
 sudo docker compose up -d
-sudo docker compose exec api dnstester-cli github.com udp://8.8.8.8 udp://1.1.1.1 --qtype A
+sudo docker compose exec api dnstester-cli github.com
 ```
 
 For more detailed setup and usage instructions, see:
