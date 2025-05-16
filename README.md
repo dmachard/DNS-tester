@@ -1,5 +1,6 @@
 <p align="center">
   <img src="https://img.shields.io/github/v/release/dmachard/dns-tester?logo=github&sort=semver" alt="release"/>
+  <img src="https://img.shields.io/badge/pytest-43-green" alt="Py tests"/>
   <img src="https://img.shields.io/docker/pulls/dmachard/dnstester.svg" alt="docker"/>
 </p>
 
@@ -48,7 +49,7 @@ To get started quickly with Docker Compose:
 
 ```bash
 sudo docker compose up -d
-sudo docker compose exec api dnstester-cli github.com udp://8.8.8.8 udp://1.1.1.1 --qtype A
+sudo docker compose exec api dnstester-cli github.com
 ```
 
 For more detailed setup and usage instructions, see:

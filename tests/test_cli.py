@@ -1,7 +1,7 @@
 import pytest
 from unittest.mock import patch, MagicMock
 from cli.commands import launcher
-from cli.commands import validate_address
+from cli.commands import validate_address, sort_result_by_dns_server
 from cli.version import PACKAGE_VERSION
 
 @pytest.fixture
@@ -73,3 +73,37 @@ def test_cli_version_flag(capsys):
 
     captured = capsys.readouterr()
     assert f"DNS Tester - version {PACKAGE_VERSION}" in captured.out
+
+def test_sort_result_by_dns_server_normal_case():
+    data = {
+        "udp://8.8.8.8": {"dns_protocol": "Do53"},
+        "tls://1.1.1.1": {"dns_protocol": "DoT"},
+        "https://dns.google": {"dns_protocol": "DoH"},
+    }
+
+    sorted_result = sort_result_by_dns_server(data)
+
+    # Validate sort order (by host then dns_protocol)
+    assert [item[0] for item in sorted_result] == [
+        "tls://1.1.1.1",       # 1.1.1.1
+        "udp://8.8.8.8",       # 8.8.8.8
+        "https://dns.google",  # dns.google
+    ]
+
+# This test verifies that sort_result_by_dns_server correctly handles cases
+# where the "dns_protocol" is None (e.g. when the DNS lookup command failed),
+# and ensures such entries are sorted using "unknown" as a fallback.
+def test_sort_result_by_dns_server_and_none_protocol():
+    data = {
+        "udp://8.8.8.8": {"dns_protocol": "Do53"},
+        "tcp://1.1.1.1": {"dns_protocol": None},
+        "tls://1.1.1.1": {"dns_protocol": "DoT"},
+    }
+
+    sorted_result = sort_result_by_dns_server(data)
+
+    assert [item[0] for item in sorted_result] == [
+        "tls://1.1.1.1",      # 1.1.1.1
+        "tcp://1.1.1.1",      # 1.1.1.1 and unknown protocol 
+        "udp://8.8.8.8",      # 8.8.8.8
+    ]

@@ -48,6 +48,10 @@ def validate_address(server_address):
         raise ValueError(f"invalid server address format: {server_address}")
     return match.group(2)
 
+def sort_result_by_dns_server(result):
+    sorted_result = sorted(result.items(), key=lambda item: (validate_address(item[0]), item[1].get("dns_protocol") or "unknown"))
+    return sorted_result
+
 def launcher(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post_reverse_lookup, get_task_status_func=get_task_status):
     global API_BASE_URL
 
@@ -100,15 +104,10 @@ def launcher(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post
             task_status = get_task_status_func(task_id)
             if task_status["task_status"] == "SUCCESS":
                 print("\nDNS lookup of %d servers completed in %.4fs:" % (len(task_status["task_result"]["details"]), task_status["task_result"]["duration"]) )
-                
-                sorted_servers = sorted(
-                    task_status["task_result"]["details"].items(),
-                    key=lambda item: (validate_address(item[0]), item[1].get("dns_protocol", "unknown"))
-                )
 
-                for server, result in sorted_servers:
-                    dns_protocol = result["dns_protocol"]
+                for server, result in sort_result_by_dns_server(task_status["task_result"]["details"]):
                     if result["command_status"] == "ok":
+                        dns_protocol = result["dns_protocol"]
                         rcode = result.get("rcode", "Unknown")
                         if rcode != "NOERROR":
                             print(f"\t{server} - No valid answer (rcode: {rcode}) - {result['time_ms']} ms")
@@ -132,8 +131,7 @@ def launcher(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post
                             else:
                                 print(f"\t{server} - {dns_protocol} - No {record_type} records found - {result['time_ms']} ms")
                     else:
-                        rcode = result.get("rcode", "Unknown")
-                        print(f"\t- {server} - {dns_protocol} - Error: {result['error']} (rcode: {rcode})")
+                        print(f"\t{server} - error: {result['error']}")
                 break
             elif task_status["task_status"] == "FAILURE":
                 print("\tTask failed.")
