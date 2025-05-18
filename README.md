@@ -1,6 +1,6 @@
 <p align="center">
   <img src="https://img.shields.io/github/v/release/dmachard/dns-tester?logo=github&sort=semver" alt="release"/>
-  <img src="https://img.shields.io/badge/pytest-43-green" alt="Py tests"/>
+  <img src="https://img.shields.io/badge/pytest-44-green" alt="Py tests"/>
   <img src="https://img.shields.io/docker/pulls/dmachard/dnstester.svg" alt="docker"/>
 </p>
 
@@ -14,6 +14,7 @@ Features:
 - 🌐 REST API built with FastAPI
 - 📦 Asynchronous processing using Redis and Celery
 - 🧪 CLI to test DNS resolution with detailed output (IP, TTL, response time, etc.)
+- 🧾 Supports loading DNS server configuration from a YAML file
 - 📊 Built-in Prometheus metrics for performance and health monitoring
 - 🛡️ Supports multiple DNS protocols: Do53 (UDP/TCP), DoT (TLS), DoH (HTTPS), and DoQ (QUIC)
 

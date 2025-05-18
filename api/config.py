@@ -25,31 +25,33 @@ def get_dns_servers_from_yaml(config: APIConfig) -> list:
             else:
                 service_type, proto = service, None
 
+            tags = server.tags if server.tags is not None else []
+        
             if service_type == 'do53':
                 scheme = proto if proto else 'udp'
                 target = f"{scheme}://{server.ip}"
                 if server.port:
                     target += f":{server.port}"
-                dns_info_list.append({"target": target, "tags": server.tags})
+                dns_info_list.append({"target": target, "tags": tags})
 
             elif service_type == 'doh':
                 host = server.hostname if server.hostname else server.ip
                 target = f"https://{host}"
                 if server.port:
                     target += f":{server.port}"
-                dns_info_list.append({"target": target, "tags": server.tags})
+                dns_info_list.append({"target": target, "tags": tags})
 
             elif service_type == 'dot':
                 host = server.hostname if server.hostname else server.ip
                 target = f"tls://{host}"
                 if server.port:
                     target += f":{server.port}"
-                dns_info_list.append({"target": target, "tags": server.tags})
+                dns_info_list.append({"target": target, "tags": tags})
 
             elif service_type == 'doq':
                 host = server.hostname if server.hostname else server.ip
                 target = f"quic://{host}"
                 if server.port:
                     target += f":{server.port}"
-                dns_info_list.append({"target": target, "tags": server.tags})
+                dns_info_list.append({"target": target, "tags": tags})
     return dns_info_list

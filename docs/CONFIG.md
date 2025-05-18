@@ -1,23 +1,34 @@
 
-# Ansible Inventory Support
+# DNS Tester – YAML Configuration Support
 
-The DNS Tester supports retrieving DNS server information from a static Ansible inventory file.
+The DNS Tester supports loading DNS server configuration from a YAML file, offering a simpler and more flexible alternative to static Ansible inventories.
 
-When no dns_servers are explicitly provided in the request, the API loads the DNS server list from the [dns] group in the inventory.
+When no dns_servers are explicitly provided in a request, the API will load the DNS server list from a structured YAML configuration.
 
-Example inventory:
+```yaml
+servers:
+  - ip: "8.8.8.8"
+    port: 53
+    services: ["do53/udp", "do53/tcp"]
+    tags: ["DNS_GOOGLE"]
 
+  - ip: "8.8.4.4"
+    port: 53
+    services: ["do53/udp", "do53/tcp"]
+
+  - ip: "9.9.9.9"
+    hostname: "dns9.quad9.net"
+    services: ["do53/udp", "do53/tcp", "dot", "doh"]
+    tags: ["DNS_QUAD9"]
 ```
-[dns]
-google1 dns_address="8.8.8.8" domain_name="" services="do53" tags="GOOGLE"
-quad9 dns_address="9.9.9.9" domain_name="dns9.quad9.net." services="do53, dot, doh" tags="QUAD9, ALLPROTOCOL"
-cloudflare dns_address="1.1.1.1" domain_name="" services="do53" tags="CLOUDFLARE"
-```
+## Field Definitions
 
-Each host entry must define:
-  - dns_address (required): IP address of the DNS server
-  - domain_name (optional): FQDN used for protocols like DoT/DoH
-  - services (optional): Comma-separated list of supported protocols (do53, dot, doh)
-  - tags (optional): Tags for the DNS provider
+Each server entry can include the following fields:
+- ip (optional): IPv4 or IPv6 address of the DNS server
+- hostname (optional): Fully qualified domain name (used for DoT, DoH, DoQ)
+- port (optional): Custom port (defaults depend on protocol)
+- services (required): List of supported protocols. Valid values: do53/udp, do53/tcp, dot, doh, doq
+- tags (optional): List of descriptive tags for classification or filtering
 
-This allows for flexible and centralized DNS configuration management using existing Ansible setups.
+> At least one of ip or hostname must be specified.
+> do53/udp and do53/tcp require a valid IP address.

@@ -1,5 +1,5 @@
 
-# API Usage
+# DNS Tester – API Usage
 
 You can explore and test the API using the Swagger UI:
 - Locally: http://localhost:5000/docs#

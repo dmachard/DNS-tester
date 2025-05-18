@@ -1,5 +1,5 @@
 
-# Monitoring with Prometheus
+# DNS Tester – Monitoring with Prometheus
 
 This project includes Prometheus metrics to track DNS resolution performance.
 

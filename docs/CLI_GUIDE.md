@@ -1,5 +1,5 @@
 
-# CLI Usage
+# DNS Tester – CLI Usage
 
 The DNS Tester includes a CLI tool for performing DNS lookups directly from the command line.
 
