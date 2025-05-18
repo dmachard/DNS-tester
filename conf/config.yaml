@@ -1,0 +1,23 @@
+servers:
+  - ip: "8.8.8.8"
+    port: 53
+    services: ["do53/udp", "do53/tcp" ]
+    tags: [ "DNS_GOOGLE" ]
+
+  - ip: "8.8.4.4"
+    port: 53
+    services: ["do53/udp", "do53/tcp" ]
+    
+  - ip: "9.9.9.9"
+    hostname: "dns9.quad9.net"
+    services: [ "do53/udp", "do53/tcp", "dot", "doh" ]
+    tags: [ "DNS_QUAD9" ]
+
+  - ip: "9.9.9.10"
+    hostname: "dns10.quad9.net"
+    services: [ "do53/udp", "do53/tcp", "dot", "doh" ]
+    tags: [ "DNS_QUAD9" ]
+
+  - ip: "1.1.1.1"
+    services: [ "do53/udp" ]
+    tags: [ "DNS_CLOUDFLARE" ]

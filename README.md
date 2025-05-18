@@ -14,7 +14,6 @@ Features:
 - 🌐 REST API built with FastAPI
 - 📦 Asynchronous processing using Redis and Celery
 - 🧪 CLI to test DNS resolution with detailed output (IP, TTL, response time, etc.)
-- 🧾 Integration with static Ansible inventory for DNS server config
 - 📊 Built-in Prometheus metrics for performance and health monitoring
 - 🛡️ Supports multiple DNS protocols: Do53 (UDP/TCP), DoT (TLS), DoH (HTTPS), and DoQ (QUIC)
 
@@ -55,7 +54,8 @@ sudo docker compose exec api dnstester-cli github.com
 For more detailed setup and usage instructions, see:
 - [API Guide](docs/API_GUIDE.md) 
 - [CLI Guide](docs/CLI_GUIDE.md) 
-- [Ansible Inventory & Prometheus Monitoring](docs/INTEGRATIONS.md)
+- [Configuration](docs/CONFIG.md)
+- [Prometheus Monitoring](docs/MONITORING.md)
 
 ## ❤️ Contributing
 

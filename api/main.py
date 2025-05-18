@@ -9,8 +9,8 @@ from cli.version import API_VERSION
 from worker.lookup import lookup_dns as celery_lookup_dns
 from worker.lookup import get_metrics as celery_get_metrics
 
-from api.models import DNSLookup, ReverseDNSLookup, DNSLookupStatus
-from api.ansible import get_dns_servers_from_ansible
+from api.config import load_yaml_config, get_dns_servers_from_yaml
+from api.models_api import DNSLookup, ReverseDNSLookup, DNSLookupStatus
 
 dnstester_logger = logging.getLogger('dnstester')
 
@@ -18,6 +18,13 @@ app = FastAPI(
     title="DNS Tester API",
     version=API_VERSION,
 )
+
+# Load the configuration file
+DEFAULT_CONFIG_PATH = os.getenv("CONFIG_PATH", "conf/config.yaml")
+app_config = load_yaml_config(DEFAULT_CONFIG_PATH)
+
+# Set the app configuration into the app state
+app.state.app_config = app_config
 
 @app.post("/dns-lookup")
 async def enqueue_dns_lookup(request: DNSLookup):
@@ -31,8 +38,8 @@ async def enqueue_dns_lookup(request: DNSLookup):
 
     # Checck if DNS inventory is empty
     if not dns_servers:
-        dnstester_logger.debug(f"No DNS servers provided in request, fetching from Ansible inventory")
-        dns_servers = get_dns_servers_from_ansible()
+        dnstester_logger.debug(f"No DNS servers provided in request, get from YAML config")
+        dns_servers = get_dns_servers_from_yaml(app.state.app_config)
         dnstester_logger.debug(f"{len(dns_servers)} DNS servers detected")
 
     # Check if DNS inventory is still empty
@@ -55,8 +62,8 @@ async def enqueue_reverse_lookup(request: ReverseDNSLookup):
 
     # Checck if DNS inventory is empty
     if not dns_servers:
-        dnstester_logger.debug(f"No DNS servers provided in request, fetching from Ansible inventory")
-        dns_servers = get_dns_servers_from_ansible()
+        dnstester_logger.debug(f"No DNS servers provided in request, get from YAML config")
+        dns_servers = get_dns_servers_from_yaml(app.state.app_config)
         dnstester_logger.debug(f"{len(dns_servers)} DNS servers detected")
 
     # Check if DNS inventory is still empty
