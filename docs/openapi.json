@@ -1,152 +1,40 @@
 {
-    "openapi": "3.1.0",
-    "info": {
-      "title": "DNS Tester API",
-      "version": "1.0.0"
-    },
-    "paths": {
-      "/dns-lookup": {
-        "post": {
-          "summary": "Enqueue Dns Lookup",
-          "description": "Enqueue a DNS lookup task.",
-          "operationId": "enqueue_dns_lookup_dns_lookup_post",
-          "requestBody": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DNSLookup"
-                }
-              }
-            },
-            "required": true
-          },
-          "responses": {
-            "200": {
-              "description": "Successful Response",
-              "content": {
-                "application/json": {
-                  "schema": {}
-                }
-              }
-            },
-            "422": {
-              "description": "Validation Error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/HTTPValidationError"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/reverse-lookup": {
-        "post": {
-          "summary": "Enqueue Reverse Lookup",
-          "description": "Enqueue a DNS reverse task.",
-          "operationId": "enqueue_reverse_lookup_reverse_lookup_post",
-          "requestBody": {
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ReverseDNSLookup"
-                }
-              }
-            },
-            "required": true
-          },
-          "responses": {
-            "200": {
-              "description": "Successful Response",
-              "content": {
-                "application/json": {
-                  "schema": {}
-                }
-              }
-            },
-            "422": {
-              "description": "Validation Error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/HTTPValidationError"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "/tasks/{task_id}": {
-        "get": {
-          "summary": "Get Task Status",
-          "description": "Get task status by task ID.",
-          "operationId": "get_task_status_tasks__task_id__get",
-          "parameters": [
-            {
-              "name": "task_id",
-              "in": "path",
-              "required": true,
+  "openapi": "3.1.0",
+  "info": {
+    "title": "DNS Tester API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/dns-lookup": {
+      "post": {
+        "summary": "Enqueue Dns Lookup",
+        "description": "Enqueue a DNS lookup task.",
+        "operationId": "enqueue_dns_lookup_dns_lookup_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
               "schema": {
-                "type": "string",
-                "title": "Task Id"
+                "$ref": "#/components/schemas/DNSLookup"
               }
             }
-          ],
-          "responses": {
-            "200": {
-              "description": "Successful Response",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/DNSLookupStatus"
-                  }
-                }
-              }
-            },
-            "422": {
-              "description": "Validation Error",
-              "content": {
-                "application/json": {
-                  "schema": {
-                    "$ref": "#/components/schemas/HTTPValidationError"
-                  }
-                }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
               }
             }
-          }
-        }
-      },
-      "/status": {
-        "get": {
-          "summary": "Health Check",
-          "description": "Health check endpoint for the API service.",
-          "operationId": "health_check_status_get",
-          "responses": {
-            "200": {
-              "description": "Successful Response",
-              "content": {
-                "application/json": {
-                  "schema": {}
-                }
-              }
-            }
-          }
-        }
-      },
-      "/metrics": {
-        "get": {
-          "summary": "Prom",
-          "description": "Expose Prometheus metrics.",
-          "operationId": "prom_metrics_get",
-          "responses": {
-            "200": {
-              "description": "Successful Response",
-              "content": {
-                "application/json": {
-                  "schema": {}
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -154,373 +42,492 @@
         }
       }
     },
-    "components": {
-      "schemas": {
-        "DNSAnswer": {
-          "properties": {
-            "name": {
-              "type": "string",
-              "title": "Name",
-              "description": "The domain name in the answer."
-            },
-            "type": {
-              "type": "string",
-              "title": "Type",
-              "description": "The DNS record type (e.g., A, AAAA, CNAME, etc.)."
-            },
-            "ttl": {
-              "type": "integer",
-              "title": "Ttl",
-              "description": "Time-to-live value of the record."
-            },
-            "value": {
-              "type": "string",
-              "title": "Value",
-              "description": "The resolved value of the record."
+    "/reverse-lookup": {
+      "post": {
+        "summary": "Enqueue Reverse Lookup",
+        "description": "Enqueue a DNS reverse task.",
+        "operationId": "enqueue_reverse_lookup_reverse_lookup_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReverseDNSLookup"
+              }
             }
           },
-          "type": "object",
-          "required": [
-            "name",
-            "type",
-            "ttl",
-            "value"
-          ],
-          "title": "DNSAnswer",
-          "description": "Represents a single DNS answer record."
+          "required": true
         },
-        "DNSLookup": {
-          "properties": {
-            "domain": {
-              "type": "string",
-              "title": "Domain",
-              "description": "Domain name to query"
-            },
-            "dns_servers": {
-              "anyOf": [
-                {
-                  "items": {
-                    "$ref": "#/components/schemas/DNSServer"
-                  },
-                  "type": "array"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dns Servers",
-              "description": "List of DNS servers to use"
-            },
-            "qtype": {
-              "type": "string",
-              "enum": [
-                "A",
-                "CNAME",
-                "PTR",
-                "TXT",
-                "AAAA"
-              ],
-              "title": "Qtype",
-              "description": "DNS query type"
-            },
-            "tls_insecure_skip_verify": {
-              "type": "boolean",
-              "title": "TLS Insecure Skip Verify",
-              "description": "Skip TLS certificate verification (for TLS-based queries)",
-              "default": false
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
             }
           },
-          "type": "object",
-          "required": [
-            "domain",
-            "qtype"
-          ],
-          "title": "DNSLookup"
-        },
-        "DNSLookupResult": {
-          "properties": {
-            "command_status": {
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/tasks/{task_id}": {
+      "get": {
+        "summary": "Get Task Status",
+        "description": "Get task status by task ID.",
+        "operationId": "get_task_status_tasks__task_id__get",
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
               "type": "string",
-              "title": "Command Status",
-              "description": "Status of the DNS command execution (ok/error)."
-            },
-            "time_ms": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "null"
+              "title": "Task Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DNSLookupStatus"
                 }
-              ],
-              "title": "Time Ms",
-              "description": "Time taken for the DNS query in milliseconds."
-            },
-            "tags": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Tags",
-              "description": "Some tags for description."
-            },
-            "rcode": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Rcode",
-              "description": "Response code (e.g., NoError, NXDomain, etc.)."
-            },
-            "name": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Name",
-              "description": "The queried domain name."
-            },
-            "qtype": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Qtype",
-              "description": "Query type (A, AAAA, CNAME, etc.)."
-            },
-            "answers": {
-              "anyOf": [
-                {
-                  "items": {
-                    "$ref": "#/components/schemas/DNSAnswer"
-                  },
-                  "type": "array"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Answers",
-              "description": "List of DNS answer records."
-            },
-            "error": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Error",
-              "description": "Error message if the query failed."
-            },
-            "dns_protocol": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dns Protocol",
-              "description": "DNS protocol (e.g., Do53, DoT, DoH and DoQ)."
+              }
             }
           },
-          "type": "object",
-          "required": [
-            "command_status"
-          ],
-          "title": "DNSLookupResult",
-          "description": "Represents the result of a DNS lookup request."
-        },
-        "DNSLookupResults": {
-          "properties": {
-            "details": {
-              "additionalProperties": {
-                "$ref": "#/components/schemas/DNSLookupResult"
-              },
-              "type": "object",
-              "title": "Details",
-              "description": "Results of the DNS query for each server."
-            },
-            "duration": {
-              "anyOf": [
-                {
-                  "type": "number"
-                },
-                {
-                  "type": "null"
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
-              ],
-              "title": "Duration",
-              "description": "Duration of the DNS lookup task in seconds."
+              }
             }
-          },
-          "type": "object",
-          "required": [
-            "details"
-          ],
-          "title": "DNSLookupResults",
-          "description": "Encapsulates the details and duration of the DNS lookup results."
-        },
-        "DNSLookupStatus": {
-          "properties": {
-            "task_id": {
-              "type": "string",
-              "title": "Task Id",
-              "description": "Unique identifier for the DNS lookup task."
-            },
-            "task_status": {
-              "type": "string",
-              "title": "Task Status",
-              "description": "Current status of the task (e.g., PENDING, SUCCESS)."
-            },
-            "task_result": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/DNSLookupResults"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "description": "Results of the DNS lookup."
+          }
+        }
+      }
+    },
+    "/status": {
+      "get": {
+        "summary": "Health Check",
+        "description": "Health check endpoint for the API service.",
+        "operationId": "health_check_status_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
             }
-          },
-          "type": "object",
-          "required": [
-            "task_id",
-            "task_status"
-          ],
-          "title": "DNSLookupStatus",
-          "description": "Represents the response of a DNS task lookup request."
-        },
-        "DNSServer": {
-          "properties": {
-            "target": {
-              "type": "string",
-              "title": "Target",
-              "description": "DNS server target with protocol"
-            },
-            "tags": {
-              "anyOf": [
-                {
-                  "type": "string"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Tags",
-              "description": "Optional tags for the DNS server"
+          }
+        }
+      }
+    },
+    "/metrics": {
+      "get": {
+        "summary": "Prom",
+        "description": "Expose Prometheus metrics.",
+        "operationId": "prom_metrics_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
             }
-          },
-          "type": "object",
-          "required": [
-            "target"
-          ],
-          "title": "DNSServer"
-        },
-        "HTTPValidationError": {
-          "properties": {
-            "detail": {
-              "items": {
-                "$ref": "#/components/schemas/ValidationError"
-              },
-              "type": "array",
-              "title": "Detail"
-            }
-          },
-          "type": "object",
-          "title": "HTTPValidationError"
-        },
-        "ReverseDNSLookup": {
-          "properties": {
-            "reverse_ip": {
-              "type": "string",
-              "format": "ipvanyaddress",
-              "title": "Reverse Ip",
-              "description": "IP address to resolve via PTR"
-            },
-            "dns_servers": {
-              "anyOf": [
-                {
-                  "items": {
-                    "$ref": "#/components/schemas/DNSServer"
-                  },
-                  "type": "array"
-                },
-                {
-                  "type": "null"
-                }
-              ],
-              "title": "Dns Servers",
-              "description": "List of DNS servers to use"
-            },
-            "tls_insecure_skip_verify": {
-              "type": "boolean",
-              "title": "Tls Insecure Skip Verify",
-              "description": "Skip TLS cert verification (for TLS-based queries)",
-              "default": false
-            }
-          },
-          "type": "object",
-          "required": [
-            "reverse_ip"
-          ],
-          "title": "ReverseDNSLookup"
-        },
-        "ValidationError": {
-          "properties": {
-            "loc": {
-              "items": {
-                "anyOf": [
-                  {
-                    "type": "string"
-                  },
-                  {
-                    "type": "integer"
-                  }
-                ]
-              },
-              "type": "array",
-              "title": "Location"
-            },
-            "msg": {
-              "type": "string",
-              "title": "Message"
-            },
-            "type": {
-              "type": "string",
-              "title": "Error Type"
-            }
-          },
-          "type": "object",
-          "required": [
-            "loc",
-            "msg",
-            "type"
-          ],
-          "title": "ValidationError"
+          }
         }
       }
     }
+  },
+  "components": {
+    "schemas": {
+      "DNSAnswer": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "The domain name in the answer."
+          },
+          "type": {
+            "type": "string",
+            "title": "Type",
+            "description": "The DNS record type (e.g., A, AAAA, CNAME, etc.)."
+          },
+          "ttl": {
+            "type": "integer",
+            "title": "Ttl",
+            "description": "Time-to-live value of the record."
+          },
+          "value": {
+            "type": "string",
+            "title": "Value",
+            "description": "The resolved value of the record."
+          }
+        },
+        "type": "object",
+        "required": [
+          "name",
+          "type",
+          "ttl",
+          "value"
+        ],
+        "title": "DNSAnswer",
+        "description": "Represents a single DNS answer record."
+      },
+      "DNSLookup": {
+        "properties": {
+          "domain": {
+            "type": "string",
+            "title": "Domain",
+            "description": "Domain name to query"
+          },
+          "dns_servers": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/DNSServer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dns Servers",
+            "description": "List of DNS servers to use"
+          },
+          "qtype": {
+            "type": "string",
+            "enum": [
+              "A",
+              "CNAME",
+              "PTR",
+              "TXT",
+              "AAAA"
+            ],
+            "title": "Qtype",
+            "description": "DNS query type"
+          },
+          "tls_insecure_skip_verify": {
+            "type": "boolean",
+            "title": "TLS Insecure Skip Verify",
+            "description": "Skip TLS certificate verification (for TLS-based queries)",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "domain",
+          "qtype"
+        ],
+        "title": "DNSLookup"
+      },
+      "DNSLookupResult": {
+        "properties": {
+          "command_status": {
+            "type": "string",
+            "title": "Command Status",
+            "description": "Status of the DNS command execution (ok/error)."
+          },
+          "time_ms": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Time Ms",
+            "description": "Time taken for the DNS query in milliseconds."
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tags",
+            "description": "List of tags for classification"
+          },
+          "rcode": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rcode",
+            "description": "Response code (e.g., NoError, NXDomain, etc.)."
+          },
+          "name": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name",
+            "description": "The queried domain name."
+          },
+          "qtype": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Qtype",
+            "description": "Query type (A, AAAA, CNAME, etc.)."
+          },
+          "answers": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/DNSAnswer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Answers",
+            "description": "List of DNS answer records."
+          },
+          "error": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Error",
+            "description": "Error message if the query failed."
+          },
+          "dns_protocol": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dns Protocol",
+            "description": "DNS protocol (e.g., Do53, DoT, DoH and DoQ)."
+          }
+        },
+        "type": "object",
+        "required": [
+          "command_status"
+        ],
+        "title": "DNSLookupResult",
+        "description": "Represents the result of a DNS lookup request."
+      },
+      "DNSLookupResults": {
+        "properties": {
+          "details": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/DNSLookupResult"
+            },
+            "type": "object",
+            "title": "Details",
+            "description": "Results of the DNS query for each server."
+          },
+          "duration": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Duration",
+            "description": "Duration of the DNS lookup task in seconds."
+          }
+        },
+        "type": "object",
+        "required": [
+          "details"
+        ],
+        "title": "DNSLookupResults",
+        "description": "Encapsulates the details and duration of the DNS lookup results."
+      },
+      "DNSLookupStatus": {
+        "properties": {
+          "task_id": {
+            "type": "string",
+            "title": "Task Id",
+            "description": "Unique identifier for the DNS lookup task."
+          },
+          "task_status": {
+            "type": "string",
+            "title": "Task Status",
+            "description": "Current status of the task (e.g., PENDING, SUCCESS)."
+          },
+          "task_result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DNSLookupResults"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "description": "Results of the DNS lookup."
+          }
+        },
+        "type": "object",
+        "required": [
+          "task_id",
+          "task_status"
+        ],
+        "title": "DNSLookupStatus",
+        "description": "Represents the response of a DNS task lookup request."
+      },
+      "DNSServer": {
+        "properties": {
+          "target": {
+            "type": "string",
+            "title": "Target",
+            "description": "DNS server target with protocol"
+          },
+          "tags": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tags",
+            "description": "Optional list of tags for the DNS server",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "target"
+        ],
+        "title": "DNSServer"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "ReverseDNSLookup": {
+        "properties": {
+          "reverse_ip": {
+            "type": "string",
+            "format": "ipvanyaddress",
+            "title": "Reverse Ip",
+            "description": "IP address to resolve via PTR"
+          },
+          "dns_servers": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/DNSServer"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dns Servers",
+            "description": "List of DNS servers to use"
+          },
+          "tls_insecure_skip_verify": {
+            "type": "boolean",
+            "title": "Tls Insecure Skip Verify",
+            "description": "Skip TLS cert verification (for TLS-based queries)",
+            "default": false
+          }
+        },
+        "type": "object",
+        "required": [
+          "reverse_ip"
+        ],
+        "title": "ReverseDNSLookup"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      }
+    }
   }
+}

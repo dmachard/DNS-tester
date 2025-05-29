@@ -52,6 +52,15 @@ def sort_result_by_dns_server(result):
     sorted_result = sorted(result.items(), key=lambda item: (validate_address(item[0]), item[1].get("dns_protocol") or "unknown"))
     return sorted_result
 
+def log_result(level, message, use_emoji=False):
+    """Log a message with emoji or ASCII fallback based on encoding support."""
+    symbols = {
+        "ok":    "✅ " if use_emoji else "[OK]",
+        "warn":  "⚠️ " if use_emoji else "[WARN] ",
+        "error": "❌ " if use_emoji else "[FAILED] ",
+    }
+    print(f"{symbols.get(level, '[???]')} {message}")
+
 def launcher(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post_reverse_lookup, get_task_status_func=get_task_status):
     global API_BASE_URL
 
@@ -67,6 +76,9 @@ def launcher(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post
     parser.add_argument("--api-url", default=API_BASE_URL, help="Base URL of the API (default: http://localhost:5000).")
     parser.add_argument("--insecure", action="store_true", help="Skip TLS certificate verification.")
     parser.add_argument("--version", "-v", action="store_true", help="Show package version and exit.")
+    parser.add_argument("--debug", action="store_true", help="Show detailed error messages for failed lookups.")
+    parser.add_argument("--pretty", "-p", action="store_true", help="Enable emoji-enhanced output.")
+    parser.add_argument( "--warn-threshold",type=float,default=1.0, help="Response time threshold in seconds for warnings (default: 1.0s).")
     args = parser.parse_args()
 
 
@@ -103,14 +115,29 @@ def launcher(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post
         while True:
             task_status = get_task_status_func(task_id)
             if task_status["task_status"] == "SUCCESS":
-                print("\nDNS lookup of %d servers completed in %.4fs:" % (len(task_status["task_result"]["details"]), task_status["task_result"]["duration"]) )
 
+               
+                nb_commands_ok = sum(
+                                    1 for result in task_status["task_result"]["details"].values()
+                                    if result["command_status"] == "ok"
+                                )
+                nb_commands = len(task_status["task_result"]["details"])
+                total_duration = task_status["task_result"]["duration"]
+
+                print(
+                    "\nDNS lookup succeeded for %d out of %d servers (%.4f seconds total)"
+                    % (nb_commands_ok, nb_commands, total_duration)
+                )
+                
                 for server, result in sort_result_by_dns_server(task_status["task_result"]["details"]):
                     if result["command_status"] == "ok":
                         dns_protocol = result["dns_protocol"]
                         rcode = result.get("rcode", "Unknown")
                         if rcode != "NOERROR":
-                            print(f"\t{server} - No valid answer (rcode: {rcode}) - {result['time_ms']} ms")
+                            if rcode == "NXDOMAIN":
+                                log_result("warn", f"{server} - Domain does not exist (rcode: NXDOMAIN) - {result['time_ms']:.2f} ms", args.pretty)
+                            else:
+                                log_result("warn", f"{server} - No valid answer (rcode: {rcode}) - {result['time_ms']:.2f} ms", args.pretty)
                         else:
                             record_type = "PTR" if is_reverse else query_type
                             answers = [
@@ -122,16 +149,23 @@ def launcher(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post
                                 values = [value for value, _ in answers]
                                 ttl_list = [ttl for _, ttl in answers]
                                 time_ms = result["time_ms"]
+                                time_sec = time_ms / 1000
+                                
+                                # Determine log level based on threshold
+                                level = "warn" if time_sec > args.warn_threshold else "ok"
 
                                 if len(set(ttl_list)) == 1:
-                                    print(f"\t{server} - {dns_protocol} - {time_ms:.5f}ms - TTL: {ttl_list[0]}s - {', '.join(values)}")
+                                    log_result(level, f"{server} - {dns_protocol} - {time_ms:.5f}ms - TTL: {ttl_list[0]}s - {', '.join(values)}", args.pretty)
                                 else:
                                     value_with_ttl = [f"{ip} (TTL: {ttl})" for ip, ttl in answers]
-                                    print(f"\t{server} - {dns_protocol} - {time_ms:.5f}ms - {', '.join(value_with_ttl)}")
+                                    log_result(level, f"{server} - {dns_protocol} - {time_ms:.5f}ms - {', '.join(value_with_ttl)}", args.pretty)
                             else:
-                                print(f"\t{server} - {dns_protocol} - No {record_type} records found - {result['time_ms']} ms")
+                                log_result("warn", f"{server} - {dns_protocol} - No {record_type} records found - {result['time_ms']} ms", args.pretty)
                     else:
-                        print(f"\t{server} - error: {result['error']}")
+                        if args.debug:
+                            log_result("error", f"{server} - connection issue or error: {result['error']}", args.pretty)
+                        else:
+                            log_result("error", f"{server} - connection issue or error", args.pretty)
                 break
             elif task_status["task_status"] == "FAILURE":
                 print("\tTask failed.")
