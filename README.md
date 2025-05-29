@@ -28,19 +28,20 @@ Features:
 >   Task ID: 1245-3456-6789
 >   Waiting for task to complete...
 > 
-> DNS lookup of 12 servers completed in 0.2900s:
->     udp://1.1.1.1 - Do53 - 14.91580ms - TTL: 59s - 140.82.121.4
->     tcp://1.1.1.1 - Do53 - 22.73039ms - TTL: 18s - 140.82.121.4
->     udp://8.8.8.8 - Do53 - 36.54281ms - TTL: 60s - 140.82.121.3
->     tcp://8.8.8.8 - Do53 - 36.22145ms - TTL: 60s - 140.82.121.3
->     udp://9.9.9.10 - Do53 - 25.82462ms - TTL: 27s - 140.82.121.4
->     tcp://9.9.9.10 - Do53 - 46.67132ms - TTL: 10s - 140.82.121.4
->     udp://9.9.9.9 - Do53 - 25.31037ms - TTL: 46s - 140.82.121.4
->     tcp://9.9.9.9 - Do53 - 41.68741ms - TTL: 27s - 140.82.121.4
->     https://dns10.quad9.net - DoH - 238.26471ms - TTL: 60s - 140.82.121.4
->     tls://dns10.quad9.net - DoT - 232.89234ms - TTL: 1s - 140.82.121.3
->     https://dns9.quad9.net - DoH - 234.11824ms - TTL: 5s - 140.82.121.4
->     tls://dns9.quad9.net - DoT - 278.54105ms - TTL: 58s - 140.82.121.4
+> DNS lookup succeeded for 13 out of 13 servers (3.2896 seconds total)
+> ✅  udp://1.1.1.1 - Do53 - 18.23916ms - TTL: 600s - 17.253.144.10
+> ✅  udp://8.8.4.4:53 - Do53 - 15.13324ms - TTL: 515s - 17.253.144.10
+> ✅  tcp://8.8.4.4:53 - Do53 - 29.19659ms - TTL: 8s - 17.253.144.10
+> ✅  udp://8.8.8.8:53 - Do53 - 17.18517ms - TTL: 313s - 17.253.144.10
+> ✅  tcp://8.8.8.8:53 - Do53 - 28.63772ms - TTL: 260s - 17.253.144.10
+> ✅  udp://9.9.9.10 - Do53 - 28.45804ms - TTL: 600s - 17.253.144.10
+> ⚠️  tcp://9.9.9.10 - Do53 - 2411.55582ms - TTL: 598s - 17.253.144.10
+> ✅  udp://9.9.9.9 - Do53 - 29.70146ms - TTL: 600s - 17.253.144.10
+> ✅  tcp://9.9.9.9 - Do53 - 52.66800ms - TTL: 600s - 17.253.144.10
+> ✅  https://dns10.quad9.net - DoH - 236.43650ms - TTL: 599s - 17.253.144.10
+> ✅  tls://dns10.quad9.net - DoT - 234.05038ms - TTL: 599s - 17.253.144.10
+> ✅  https://dns9.quad9.net - DoH - 199.50676ms - TTL: 600s - 17.253.144.10
+> ⚠️  tls://dns9.quad9.net - DoT - 3278.41313ms - TTL: 599s - 17.253.144.10
 > ```
 
 ## 🚀 Getting Started

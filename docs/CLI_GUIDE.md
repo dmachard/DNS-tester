@@ -18,6 +18,9 @@ sudo docker compose exec api dnstester-cli <domain> [dns_servers...] [--qtype <q
 - `--qtype`: The DNS query type. Supported values are `A` (default) and `AAAA`.
 - `--api-url`: The base URL of the API (default: `http://localhost:5000`).
 - `--insecure`: Skip TLS certificate verification for secure DNS queries.
+- `--debug`: Show detailed error messages for failed DNS lookups.
+- `--pretty`, `-p`: Enable emoji-enhanced output (e.g., ✅, ⚠️, ❌).
+- `--warn-threshold`: Response time threshold in seconds for warnings (default: `1.0`).
 
 ## Example Usage
 
