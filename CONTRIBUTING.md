@@ -4,6 +4,11 @@ Contributions are welcome and appreciated! Whether it's fixing a bug, improving 
 
 Before opening a pull request, please read the following guidelines to ensure smooth collaboration.
 
+## Frameworks used
+
+- 🌐 REST API built with FastAPI
+- 📦 Asynchronous processing using Redis and Celery
+
 ## ✅ Contribution Guidelines
 
 - Keep the project backward compatible and follow existing code conventions.
