@@ -16,7 +16,7 @@
 - 📊 **Continuous Health Monitoring**: Track DNS performance with built-in Prometheus metrics
 - 🛡️ **Multi-Protocol Support**: Handle mixed environments with Do53, DoT, DoH, and DoQ
 
-> Example output of a full DNS test executed in parallel across 12 servers using the CLI tool:
+> Example output of a full DNS test executed in parallel across 7 servers using the CLI tool:
 > 
 > ```
 > Starting DNS lookup for domain: internal.company.com
@@ -26,7 +26,7 @@
 >   Task ID: 1245-3456-6789
 >   Waiting for task to complete...
 > 
-> DNS lookup succeeded for 13 out of 13 servers (3.2896 seconds total)
+> DNS lookup succeeded for 7 out of 7 servers (3.2896 seconds total)
 > ✅  udp://cache-dc1.company.com - Do53 - 18.23916ms - TTL: 600s - 10.1.1.100
 > ✅  udp://cache-dc2.company.com:53 - Do53 - 15.13324ms - TTL: 515s - 10.1.1.100
 > ✅  tcp://cache-aws.company.com:53 - Do53 - 29.19659ms - TTL: 8s - 10.1.1.100
