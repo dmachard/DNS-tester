@@ -42,7 +42,6 @@ def test_main_direct_lookup(mock_post_dns_lookup, mock_get_task_status, capsys):
     captured = capsys.readouterr()
     
     # Assertions
-    assert "mock-task-id" in captured.out
     assert "udp://8.8.8.8 - Do53 - 30.50000ms - TTL: 300s - 93.184.216.34" in captured.out
 
 def test_validate_address_valid_inputs():

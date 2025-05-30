@@ -127,7 +127,7 @@ def launcher(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post
                 total_duration = task_status["task_result"]["duration"]
 
                 print(
-                    "\nDNS lookup succeeded for %d out of %d servers (%.4f seconds total)"
+                    "DNS lookup succeeded for %d out of %d servers (%.4f seconds total)"
                     % (nb_commands_ok, nb_commands, total_duration)
                 )
                 

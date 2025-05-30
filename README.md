@@ -21,8 +21,6 @@
 > 
 > ```
 > Starting DNS lookup for domain: internal.company.com
->   Waiting for task to complete...
-> 
 > DNS lookup succeeded for 7 out of 7 servers (3.2896 seconds total)
 > ✅  udp://cache-dc1.company.com - Do53 - 18.23916ms - TTL: 600s - 10.1.1.100
 > ✅  udp://cache-dc2.company.com:53 - Do53 - 15.13324ms - TTL: 515s - 10.1.1.100
