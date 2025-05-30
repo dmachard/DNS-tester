@@ -8,7 +8,7 @@
   <img src="docs/logo-dns-tester.png" alt="DNS-collector"/>
 </p>
 
-`DNS Tester`is a scalable tool designed for enterprise environments to validate DNS cache consistency, monitor performance across distributed DNS infrastructure, and ensure reliable name resolution at scale.
+**DNS Tester** is a scalable and asynchronous tool for testing and monitoring multiple DNS servers, with support for modern DNS protocols, CLI automation, and observability.
 
 🎯 Use Cases:
 - 🚨 **Incident Response**: DNS issues at 3 AM? Get instant visibility across all your DNS servers.

@@ -4,10 +4,11 @@ Contributions are welcome and appreciated! Whether it's fixing a bug, improving 
 
 Before opening a pull request, please read the following guidelines to ensure smooth collaboration.
 
-## Frameworks used
-
-- 🌐 REST API built with FastAPI
-- 📦 Asynchronous processing using Redis and Celery
+## 🏗️ Architecture
+- **API Layer**: FastAPI REST endpoints
+- **Task Queue**: Redis + Celery for async processing
+- **CLI**: Direct interface for testing and automation
+- **Monitoring**: Built-in Prometheus metrics
 
 ## ✅ Contribution Guidelines
 
