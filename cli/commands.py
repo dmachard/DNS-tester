@@ -87,10 +87,10 @@ def launcher(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post
     is_reverse = args.reverse or validate_ip(args.query)
     
     if is_reverse:
-        print(f"Starting Reverse DNS lookup for IP: {args.query} ")
+        print(f"Starting Reverse DNS lookup for IP: {args.query} ", end="", flush=True)
         query_type = "PTR"
     else:
-        print(f"Starting DNS lookup for domain: {args.query} ")
+        print(f"Starting DNS lookup for domain: {args.query} ", end="", flush=True)
         query_type = args.qtype
 
     try:
@@ -101,7 +101,7 @@ def launcher(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post
         return
 
     if args.debug:
-        print(f"\tUsing DNS servers: {', '.join(args.dns_servers) if args.dns_servers else 'Fetching from inventory'}")
+        print(f"\n\tUsing DNS servers: {', '.join(args.dns_servers) if args.dns_servers else 'Fetching from inventory'}")
         print(f"\tQuery type: {query_type}")
         print(f"\tAPI Base URL: {API_BASE_URL}")
         print(f"\tTLS Skip Verify: {args.insecure}")
@@ -127,7 +127,7 @@ def launcher(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post
                 total_duration = task_status["task_result"]["duration"]
 
                 print(
-                    "DNS lookup succeeded for %d out of %d servers (%.4f seconds total)"
+                    "\nDNS lookup succeeded for %d out of %d servers (%.4f seconds total)"
                     % (nb_commands_ok, nb_commands, total_duration)
                 )
                 
@@ -173,8 +173,7 @@ def launcher(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post
                 print("\tTask failed.")
                 break
             else:
-                if args.debug:
-                    print("\tWaiting for task to complete...")
-                time.sleep(1)
+                print(".", end="", flush=True)
+                time.sleep(0.5)
     except requests.RequestException as e:
         print(f"Error: {e}")
