@@ -21,10 +21,6 @@
 > 
 > ```
 > Starting DNS lookup for domain: internal.company.com
->   Using DNS servers: Fetching from inventory
->   API Base URL: http://localhost:5000
->   TLS Skip Verify: False
->   Task ID: 1245-3456-6789
 >   Waiting for task to complete...
 > 
 > DNS lookup succeeded for 7 out of 7 servers (3.2896 seconds total)
@@ -43,7 +39,7 @@ To get started quickly with Docker Compose:
 
 ```bash
 sudo docker compose up -d
-sudo docker compose exec api dnstester-cli github.com
+sudo docker compose exec api dnstester-cli internal.company.com
 ```
 
 For more detailed setup and usage instructions, see:
