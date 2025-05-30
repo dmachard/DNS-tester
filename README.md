@@ -11,7 +11,7 @@
 `DNS Tester`is a scalable tool designed for enterprise environments to validate DNS cache consistency, monitor performance across distributed DNS infrastructure, and ensure reliable name resolution at scale.
 
 🎯 Use Cases:
-- 🚨**Incident Response**: DNS issues at 3 AM? Get instant visibility across all your DNS servers.
+- 🚨 **Incident Response**: DNS issues at 3 AM? Get instant visibility across all your DNS servers.
 - 🔍 **DNS Cache Validation**: Verify that all your DNS caches (datacenter, cloud, edge) resolve domains consistently. Built for testing multiple internal DNS caches simultaneously.
 - ⚡ **Performance Monitoring**: Compare response times across your distributed DNS infrastructure
 - 📊 **Continuous Health Monitoring**: Track DNS performance with built-in Prometheus metrics
@@ -21,8 +21,6 @@
 > 
 > ```
 > Starting DNS lookup for domain: internal.company.com
->   Waiting for task to complete...
-> 
 > DNS lookup succeeded for 7 out of 7 servers (3.2896 seconds total)
 > ✅  udp://cache-dc1.company.com - Do53 - 18.23916ms - TTL: 600s - 10.1.1.100
 > ✅  udp://cache-dc2.company.com:53 - Do53 - 15.13324ms - TTL: 515s - 10.1.1.100

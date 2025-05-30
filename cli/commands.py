@@ -76,7 +76,7 @@ def launcher(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post
     parser.add_argument("--api-url", default=API_BASE_URL, help="Base URL of the API (default: http://localhost:5000).")
     parser.add_argument("--insecure", action="store_true", help="Skip TLS certificate verification.")
     parser.add_argument("--version", "-v", action="store_true", help="Show package version and exit.")
-    parser.add_argument("--debug", action="store_true", help="Show detailed error messages for failed lookups.")
+    parser.add_argument("--debug", "-d", action="store_true", help="Show detailed error messages for failed lookups.")
     parser.add_argument("--pretty", "-p", action="store_true", help="Enable emoji-enhanced output.")
     parser.add_argument( "--warn-threshold",type=float,default=1.0, help="Response time threshold in seconds for warnings (default: 1.0s).")
     args = parser.parse_args()
@@ -87,10 +87,10 @@ def launcher(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post
     is_reverse = args.reverse or validate_ip(args.query)
     
     if is_reverse:
-        print(f"Starting Reverse DNS lookup for IP: {args.query}")
+        print(f"Starting Reverse DNS lookup for IP: {args.query} ")
         query_type = "PTR"
     else:
-        print(f"Starting DNS lookup for domain: {args.query}")
+        print(f"Starting DNS lookup for domain: {args.query} ")
         query_type = args.qtype
 
     try:
@@ -100,17 +100,19 @@ def launcher(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post
         print(f"Error > {e}")
         return
 
-    print(f"\tUsing DNS servers: {', '.join(args.dns_servers) if args.dns_servers else 'Fetching from inventory'}")
-    print(f"\tQuery type: {query_type}")
-    print(f"\tAPI Base URL: {API_BASE_URL}")
-    print(f"\tTLS Skip Verify: {args.insecure}")
+    if args.debug:
+        print(f"\tUsing DNS servers: {', '.join(args.dns_servers) if args.dns_servers else 'Fetching from inventory'}")
+        print(f"\tQuery type: {query_type}")
+        print(f"\tAPI Base URL: {API_BASE_URL}")
+        print(f"\tTLS Skip Verify: {args.insecure}")
     
     try:
         if is_reverse:
             task_id = post_reverse_lookup_func(args.query, args.dns_servers, args.insecure)
         else:
             task_id = post_dns_lookup_func(args.query, args.dns_servers, args.qtype, args.insecure)
-        print(f"\tTask ID: {task_id}")
+        if args.debug:
+            print(f"\tTask ID: {task_id}")
 
         while True:
             task_status = get_task_status_func(task_id)
@@ -125,7 +127,7 @@ def launcher(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post
                 total_duration = task_status["task_result"]["duration"]
 
                 print(
-                    "\nDNS lookup succeeded for %d out of %d servers (%.4f seconds total)"
+                    "DNS lookup succeeded for %d out of %d servers (%.4f seconds total)"
                     % (nb_commands_ok, nb_commands, total_duration)
                 )
                 
@@ -171,7 +173,8 @@ def launcher(post_dns_lookup_func=post_dns_lookup, post_reverse_lookup_func=post
                 print("\tTask failed.")
                 break
             else:
-                print("\tWaiting for task to complete...")
+                if args.debug:
+                    print("\tWaiting for task to complete...")
                 time.sleep(1)
     except requests.RequestException as e:
         print(f"Error: {e}")
