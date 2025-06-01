@@ -46,7 +46,7 @@ For more detailed setup and usage instructions, see:
 - [Configuration](docs/CONFIG.md)
 - [Prometheus Monitoring](docs/MONITORING.md)
 
-## 🤝 Contributing
+## 👥 Contributions
 
 Contributions are welcome!
 Please read the [Developer Guide](CONTRIBUTING.md) for local setup and testing instructions.
