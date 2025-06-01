@@ -46,14 +46,11 @@ For more detailed setup and usage instructions, see:
 - [Configuration](docs/CONFIG.md)
 - [Prometheus Monitoring](docs/MONITORING.md)
 
-## ❤️ Contributing
+## 🤝 Contributing
 
 Contributions are welcome!
 Please read the [Developer Guide](CONTRIBUTING.md) for local setup and testing instructions.
 
-## 🧰 Other DNS Tools
+## 🧰 Related Projects:
 
-| | |
-|:--:|------------|
-| <a href="https://github.com/dmachard/DNS-collector" target="_blank"><img src="https://github.com/dmachard/DNS-collector/blob/main/docs/dns-collector_logo.png?raw=true" alt="DNS-collector" width="200"/></a> | Ingesting, pipelining, and enhancing your DNS logs with usage indicators, security analysis, and additional metadata. |
-| <a href="https://github.com/dmachard/DNS-tester" target="_blank"><img src="https://github.com/dmachard/DNS-tester/blob/main/docs/logo-dns-tester.png?raw=true" alt="DNS-collector" width="200"/></a> | Validate consistency and performance across enterprise DNS cache infrastructure at scale. Built for testing multiple internal DNS caches simultaneously. |
+- [DNS-collector](https://github.com/dmachard/DNS-collector) - Grab your DNS logs, detect anomalies, and finally understand what's happening on your network.
