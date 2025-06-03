@@ -89,7 +89,9 @@ def test_get_dns_servers_from_yaml():
         {'target': 'udp://9.9.9.9', 'tags': ['DNS_QUAD9']},
         {'target': 'tcp://9.9.9.9', 'tags': ['DNS_QUAD9']},
         {'target': 'tls://dns9.quad9.net', 'tags': ['DNS_QUAD9']},
+        {'target': 'tls://9.9.9.9', 'tags': ['DNS_QUAD9']},
         {'target': 'https://dns9.quad9.net', 'tags': ['DNS_QUAD9']},
+        {'target': 'https://9.9.9.9', 'tags': ['DNS_QUAD9']},
         {'target': 'udp://1.1.1.1', 'tags': ['DNS_CLOUDFLARE']},
     ]
 
