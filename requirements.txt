@@ -3,7 +3,7 @@ redis==6.1.0
 fastapi==0.115.12
 uvicorn==0.34.2
 pydantic==2.11.5
-pytest==8.3.5
+pytest==8.4.0
 pytest-mock==3.14.1
 httpx==0.28.1
 prometheus-client==0.22.0
