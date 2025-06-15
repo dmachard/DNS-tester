@@ -7,5 +7,5 @@ pytest==8.4.0
 pytest-mock==3.14.1
 httpx==0.28.1
 prometheus-client==0.22.1
-requests==2.32.3
+requests==2.32.4
 pyyaml==6.0.2
