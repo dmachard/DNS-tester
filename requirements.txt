@@ -6,6 +6,6 @@ pydantic==2.11.7
 pytest==8.4.1
 pytest-mock==3.14.1
 httpx==0.28.1
-prometheus-client==0.22.1
+prometheus-client==0.23.1
 requests==2.32.5
 pyyaml==6.0.2
