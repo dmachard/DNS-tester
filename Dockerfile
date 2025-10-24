@@ -12,7 +12,7 @@ RUN git clone --depth 1 --branch ${Q_VERSION} https://github.com/natesales/q.git
     go build -o q 
 
 # Stage 2: Python app with `q` binary
-FROM python:3.13-slim
+FROM python:3.14-slim
 
 WORKDIR /app
 
