@@ -21,9 +21,9 @@ COPY --from=builder /tmp/q-src/q /usr/local/bin/q
 RUN chmod +x /usr/local/bin/q && q --version
 
 RUN apt-get update && \
-    apt-get install -y dnsutils && \
-    # Clean up
-    apt-get autoremove -y && \
+    apt-get install -y --no-install-recommends build-essential gcc pkg-config libssl-dev rustc cargo && \
+    pip install --no-cache-dir -r requirements.txt && \
+    apt-get purge -y --auto-remove build-essential gcc pkg-config libssl-dev rustc cargo && \
     rm -rf /var/lib/apt/lists/*
 
 COPY requirements.txt .
