@@ -56,7 +56,7 @@ def log_result(level, message, use_emoji=False):
     """Log a message with emoji or ASCII fallback based on encoding support."""
     symbols = {
         "ok":    "✅ " if use_emoji else "[OK]",
-        "warn":  "⚠️ " if use_emoji else "[WARN] ",
+        "warn":  "❗ " if use_emoji else "[WARN] ",
         "error": "❌ " if use_emoji else "[FAILED] ",
     }
     print(f"{symbols.get(level, '[???]')} {message}")
