@@ -20,13 +20,16 @@ WORKDIR /app
 COPY --from=builder /tmp/q-src/q /usr/local/bin/q
 RUN chmod +x /usr/local/bin/q && q --version
 
+# Copy requirements first so Docker can cache this layer
+COPY requirements.txt .
+
+# Install dependencies and build tools temporarily
 RUN apt-get update && \
     apt-get install -y --no-install-recommends build-essential gcc pkg-config libssl-dev rustc cargo && \
     pip install --no-cache-dir -r requirements.txt && \
     apt-get purge -y --auto-remove build-essential gcc pkg-config libssl-dev rustc cargo && \
     rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
 COPY ./scripts/dnstester-cli.sh /usr/local/bin/dnstester-cli
 RUN pip install --no-cache-dir -r requirements.txt && \
     useradd --create-home --shell /bin/bash dnstester && \
