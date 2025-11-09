@@ -12,7 +12,7 @@ RUN git clone --depth 1 --branch ${Q_VERSION} https://github.com/natesales/q.git
     go build -o q 
 
 # Stage 2: Python app with `q` binary
-FROM python:3.13-slim
+FROM python:3.14-slim
 
 WORKDIR /app
 
@@ -20,13 +20,16 @@ WORKDIR /app
 COPY --from=builder /tmp/q-src/q /usr/local/bin/q
 RUN chmod +x /usr/local/bin/q && q --version
 
+# Copy requirements first so Docker can cache this layer
+COPY requirements.txt .
+
+# Install dependencies and build tools temporarily
 RUN apt-get update && \
-    apt-get install -y dnsutils && \
-    # Clean up
-    apt-get autoremove -y && \
+    apt-get install -y --no-install-recommends build-essential gcc pkg-config libssl-dev rustc cargo && \
+    pip install --no-cache-dir -r requirements.txt && \
+    apt-get purge -y --auto-remove build-essential gcc pkg-config libssl-dev rustc cargo && \
     rm -rf /var/lib/apt/lists/*
 
-COPY requirements.txt .
 COPY ./scripts/dnstester-cli.sh /usr/local/bin/dnstester-cli
 RUN pip install --no-cache-dir -r requirements.txt && \
     useradd --create-home --shell /bin/bash dnstester && \
