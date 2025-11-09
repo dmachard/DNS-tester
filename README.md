@@ -26,9 +26,9 @@
 > ✅  udp://cache-dc2.company.com:53 - Do53 - 15.13324ms - TTL: 515s - 10.1.1.100
 > ✅  tcp://cache-aws.company.com:53 - Do53 - 29.19659ms - TTL: 8s - 10.1.1.100
 > ✅  udp://cache-gcp.company.com:53 - Do53 - 17.18517ms - TTL: 313s - 10.1.1.100
-> ⚠️  tcp://cache-edge.company.com - Do53 - 2411.55582ms - TTL: 598s - 10.1.1.100
+> ❗  tcp://cache-edge.company.com - Do53 - 2411.55582ms - TTL: 598s - 10.1.1.100
 > ✅  https://doh.company.com - DoH - 236.43650ms - TTL: 599s - 10.1.1.100
-> ⚠️  tls://dot.company.com - DoT - 3278.41313ms - TTL: 599s - 10.1.1.100
+> ❗  tls://dot.company.com - DoT - 3278.41313ms - TTL: 599s - 10.1.1.100
 > ```
 
 ## 🚀 Getting Started
@@ -54,3 +54,4 @@ Please read the [Developer Guide](CONTRIBUTING.md) for local setup and testing i
 ## 🧰 Related Projects:
 
 - [DNS-collector](https://github.com/dmachard/DNS-collector) - Grab your DNS logs, detect anomalies, and finally understand what's happening on your network.
+- [CoreDNS-GSLB](https://github.com/dmachard/coredns-gslb) - Global Server Load Balancing functionality in CoreDNS
