@@ -1,5 +1,5 @@
 celery==5.5.3
-redis==7.0.1
+redis==7.1.0
 fastapi==0.120.4
 uvicorn==0.38.0
 pydantic==2.12.5
