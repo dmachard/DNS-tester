@@ -1,6 +1,6 @@
 celery==5.6.1
 redis==7.1.0
-fastapi==0.123.5
+fastapi==0.128.0
 uvicorn==0.38.0
 pydantic==2.12.5
 pytest==9.0.1
