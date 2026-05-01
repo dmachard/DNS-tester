@@ -1,7 +1,7 @@
 celery==5.6.3
 redis==7.4.0
 fastapi==0.135.3
-uvicorn==0.42.0
+uvicorn==0.46.0
 pydantic==2.12.5
 pytest==9.0.2
 pytest-mock==3.15.1
