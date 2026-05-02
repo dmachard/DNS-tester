@@ -8,13 +8,15 @@ Before running the CLI, start the Docker services:
 
 ```bash
 sudo docker compose up -d
-````
+```
 
 After the services are running, use the CLI inside the `api` container:
 
 ```bash
 sudo docker compose exec api dnstester-cli <query> [dns_servers...] [options]
 ```
+
+---
 
 ## Syntax
 
@@ -34,33 +36,29 @@ dnstester-cli <query> [dns_servers...] \
 ## Arguments
 
 * `<query>`: Domain name or IP address to query.
-* `[dns_servers...]`: List of DNS servers, for example `udp://8.8.8.8`, `tcp://1.1.1.1`, `tls://9.9.9.9`, `https://...`, `quic://...`.
-  If not provided, servers are fetched from inventory.
-* `--qtype`: DNS query type for forward lookups. Supported values: `A`, `AAAA`, `MX`, `CNAME`. Default: `A`.
+* `[dns_servers...]`: List of DNS servers (e.g., `udp://8.8.8.8`, `tls://1.1.1.1`). If not provided, servers are fetched from inventory.
+* `--qtype`: DNS query type for forward lookups (`A`, `AAAA`, `MX`, `CNAME`). Default: `A`.
 * `--reverse`, `-r`: Perform a reverse DNS lookup (PTR).
 * `--api-url`: Base URL of the API. Default: `http://localhost:5000`.
 * `--insecure`: Skip TLS certificate verification.
 * `--debug`, `-d`: Show detailed debug output and error messages.
 * `--pretty`, `-p`: Enable emoji-enhanced output.
 * `--warn-threshold`: Response time threshold in seconds for warning messages. Default: `1.0`.
-* `--input-file`: Read multiple domains from a file.
+* `--input-file`: Read multiple domains from a file (must exist inside the container).
 * `--version`, `-v`: Show package version and exit.
 
-## Behavior
+---
 
-* If the query is an IP address, the CLI automatically performs a reverse lookup.
-* If `--reverse` is used, the CLI performs a PTR lookup regardless of `--qtype`.
-* When using `--input-file`, each line is treated as one lookup target.
-* When multiple targets are provided, results are printed one by one.
+## Input File Format
 
-## Input file format
+The file must contain lines in the following format: `TYPE;domain`
 
-The file must contain lines in this format:
-
+Example `domains.txt`:
 ```text
-TYPE;domain
+A;example.com
+AAAA;example.org
+MX;gmail.com
 ```
-
 Supported types:
 
 * `A`
@@ -68,16 +66,11 @@ Supported types:
 * `MX`
 * `CNAME`
 
-Example:
+>Empty lines are ignored. Invalid lines are skipped.
+### Important: File Paths in Docker
+When using the `--input-file` option, the path must point to a file **inside the container's file system**, not your host machine. To use a local file, you must mount it as a volume.
 
-```text
-A;example.com
-AAAA;example.org
-MX;gmail.com
-CNAME;www.example.net
-```
-
-Empty lines are ignored. Invalid lines are skipped.
+---
 
 ## Example usage
 
@@ -128,3 +121,10 @@ sudo docker compose exec api dnstester-cli --input-file domains.txt
 ```bash
 sudo docker compose exec api dnstester-cli --version
 ```
+
+---
+
+## Behavior
+* **Auto-detection**: If the query is an IP address, the CLI automatically performs a reverse lookup.
+* **Force Reverse**: If `--reverse` is used, the CLI performs a PTR lookup regardless of other flags.
+* **Batch Processing**: When using `--input-file`, the CLI processes each line and outputs results sequentially.
