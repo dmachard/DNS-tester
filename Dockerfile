@@ -12,41 +12,37 @@ RUN apk add --no-cache git && \
     go mod tidy && \
     CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o q
 
-# Stage 2: Build Python dependencies in a virtual environment
-FROM python:3.14-slim AS py-builder
+# Stage 2: Build Python dependencies matching distroless python 3.13
+FROM python:3.13-slim AS py-builder
 
 WORKDIR /app
-
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends build-essential gcc pkg-config libssl-dev rustc cargo && \
-    rm -rf /var/lib/apt/lists/*
 
 RUN python -m venv /opt/venv
 ENV PATH="/opt/venv/bin:$PATH"
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip uninstall -y pip && \
+    find /opt/venv -name '__pycache__' -type d -exec rm -rf {} + 2>/dev/null || true && \
+    find /opt/venv -name '*.pyc' -delete
 
-# Stage 3: Minimal runtime image
-FROM python:3.14-slim AS runtime
+# Stage 3: Minimal Distroless runtime
+FROM gcr.io/distroless/python3-debian13:latest AS runtime
 
 WORKDIR /app
 
 # Copy the built `q` binary
 COPY --from=q-builder /tmp/q-src/q /usr/local/bin/q
-RUN chmod +x /usr/local/bin/q && q --version
 
-# Copy the virtual environment with all installed packages
+# Copy Python virtual environment
 COPY --from=py-builder /opt/venv /opt/venv
-ENV PATH="/opt/venv/bin:$PATH"
+ENV PATH="/opt/venv/bin:/usr/local/bin:$PATH"
+ENV PYTHONPATH="/opt/venv/lib/python3.13/site-packages"
 
-COPY ./scripts/dnstester-cli.sh /usr/local/bin/dnstester-cli
-RUN useradd --create-home --shell /bin/bash dnstester && \
-    chmod +x /usr/local/bin/dnstester-cli && \
-    chown dnstester:dnstester /usr/local/bin/dnstester-cli
+# Copy application files
+COPY --chown=nonroot:nonroot . .
 
-USER dnstester
-COPY --chown=dnstester:dnstester . .
+USER nonroot
 
-CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "5000"]
-
+ENTRYPOINT ["python3", "entrypoint.py"]
+CMD ["api"]
