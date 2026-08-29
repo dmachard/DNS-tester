@@ -3,7 +3,7 @@ FROM golang:1.26-alpine AS q-builder
 
 WORKDIR /app
 
-ARG Q_VERSION=v0.19.2
+ARG Q_VERSION=v0.19.12
 
 # Clone and build `q`
 RUN apk add --no-cache git && \
@@ -13,7 +13,7 @@ RUN apk add --no-cache git && \
     CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o q
 
 # Stage 2: Build Python dependencies matching distroless python 3.13
-FROM python:3.13-slim AS py-builder
+FROM python:3.14-slim AS py-builder
 
 WORKDIR /app
 
