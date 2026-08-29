@@ -3,7 +3,7 @@ FROM golang:1.26-alpine AS q-builder
 
 WORKDIR /app
 
-ARG Q_VERSION=v0.19.12
+ARG Q_VERSION=v0.19.2
 
 # Clone and build `q`
 RUN apk add --no-cache git && \
@@ -12,8 +12,8 @@ RUN apk add --no-cache git && \
     go mod tidy && \
     CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o q
 
-# Stage 2: Build Python dependencies matching distroless python 3.13
-FROM python:3.14-slim AS py-builder
+# Stage 2: Build Python dependencies on Alpine
+FROM python:3.14-alpine AS py-builder
 
 WORKDIR /app
 
@@ -26,23 +26,24 @@ RUN pip install --no-cache-dir -r requirements.txt && \
     find /opt/venv -name '__pycache__' -type d -exec rm -rf {} + 2>/dev/null || true && \
     find /opt/venv -name '*.pyc' -delete
 
-# Stage 3: Minimal Distroless runtime
-FROM gcr.io/distroless/python3-debian13:latest AS runtime
+# Stage 3: Minimal Alpine runtime
+FROM python:3.14-alpine AS runtime
 
 WORKDIR /app
 
 # Copy the built `q` binary
 COPY --from=q-builder /tmp/q-src/q /usr/local/bin/q
+RUN chmod +x /usr/local/bin/q && q --version
 
 # Copy Python virtual environment
 COPY --from=py-builder /opt/venv /opt/venv
-ENV PATH="/opt/venv/bin:/usr/local/bin:$PATH"
-ENV PYTHONPATH="/opt/venv/lib/python3.13/site-packages"
+ENV PATH="/opt/venv/bin:$PATH"
 
-# Copy application files
-COPY --chown=nonroot:nonroot . .
+# Create non-root user
+RUN adduser -D dnstester
+USER dnstester
 
-USER nonroot
+COPY --chown=dnstester:dnstester . .
 
-ENTRYPOINT ["python3", "entrypoint.py"]
+ENTRYPOINT ["python", "entrypoint.py"]
 CMD ["api"]
