@@ -26,7 +26,7 @@ services:
     volumes:
       - ./conf/logging.ini:/app/logging.conf
       - ./conf/config.yaml:/app/config.yaml
-    command: sh -c "uvicorn api.main:app --log-config=/app/logging.conf --host ${UVICORN_HOST:-0.0.0.0} --port ${UVICORN_PORT:-5000} --workers ${UVICORN_WORKERS:-1}"
+    command: ["api"]
     restart: unless-stopped
 
   worker:
@@ -37,7 +37,7 @@ services:
       - redis
     volumes:
       - ./conf/logging.ini:/app/logging.conf
-    command: sh -c "celery -A worker.lookup worker --loglevel=${CELERY_LOGLEVEL:-info} --concurrency=${CELERY_CONCURRENCY:-4}"
+    command: ["worker"]
     restart: unless-stopped
 
 volumes:
