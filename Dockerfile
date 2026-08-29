@@ -1,5 +1,5 @@
 # Stage 1: Build `q` binary
-FROM golang:1.26-alpine AS builder
+FROM golang:1.26-alpine AS q-builder
 
 WORKDIR /app
 
@@ -12,24 +12,33 @@ RUN apk add --no-cache git && \
     go mod tidy && \
     CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o q
 
-# Stage 2: Python app with `q` binary
-FROM python:3.14-slim
+# Stage 2: Build Python dependencies in a virtual environment
+FROM python:3.14-slim AS py-builder
 
 WORKDIR /app
 
-# Copy the built `q` binary from the builder stage
-COPY --from=builder /tmp/q-src/q /usr/local/bin/q
-RUN chmod +x /usr/local/bin/q && q --version
-
-# Copy requirements first so Docker can cache this layer
-COPY requirements.txt .
-
-# Install dependencies and build tools temporarily
 RUN apt-get update && \
     apt-get install -y --no-install-recommends build-essential gcc pkg-config libssl-dev rustc cargo && \
-    pip install --no-cache-dir -r requirements.txt && \
-    apt-get purge -y --auto-remove build-essential gcc pkg-config libssl-dev rustc cargo && \
     rm -rf /var/lib/apt/lists/*
+
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Stage 3: Minimal runtime image
+FROM python:3.14-slim AS runtime
+
+WORKDIR /app
+
+# Copy the built `q` binary
+COPY --from=q-builder /tmp/q-src/q /usr/local/bin/q
+RUN chmod +x /usr/local/bin/q && q --version
+
+# Copy the virtual environment with all installed packages
+COPY --from=py-builder /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
 COPY ./scripts/dnstester-cli.sh /usr/local/bin/dnstester-cli
 RUN useradd --create-home --shell /bin/bash dnstester && \
