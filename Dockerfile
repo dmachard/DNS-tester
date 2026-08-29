@@ -1,15 +1,16 @@
 # Stage 1: Build `q` binary
-FROM golang:1.26 AS builder
+FROM golang:1.26-alpine AS builder
 
 WORKDIR /app
 
 ARG Q_VERSION=v0.19.2
 
 # Clone and build `q`
-RUN git clone --depth 1 --branch ${Q_VERSION} https://github.com/natesales/q.git /tmp/q-src && \
+RUN apk add --no-cache git && \
+    git clone --depth 1 --branch ${Q_VERSION} https://github.com/natesales/q.git /tmp/q-src && \
     cd /tmp/q-src && \
     go mod tidy && \
-    go build -o q 
+    CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o q
 
 # Stage 2: Python app with `q` binary
 FROM python:3.14-slim
@@ -31,8 +32,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 COPY ./scripts/dnstester-cli.sh /usr/local/bin/dnstester-cli
-RUN pip install --no-cache-dir -r requirements.txt && \
-    useradd --create-home --shell /bin/bash dnstester && \
+RUN useradd --create-home --shell /bin/bash dnstester && \
     chmod +x /usr/local/bin/dnstester-cli && \
     chown dnstester:dnstester /usr/local/bin/dnstester-cli
 
