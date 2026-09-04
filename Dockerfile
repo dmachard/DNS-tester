@@ -1,5 +1,5 @@
 # Stage 1: Build `q` binary
-FROM golang:1.26-alpine AS q-builder
+FROM golang:1.27-alpine AS q-builder
 
 WORKDIR /app
 
