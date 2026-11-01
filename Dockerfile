@@ -13,7 +13,7 @@ RUN apk add --no-cache git && \
     CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o q
 
 # Stage 2: Build Python dependencies on Alpine
-FROM python:3.14-alpine AS py-builder
+FROM python:3.15-alpine AS py-builder
 
 WORKDIR /app
 
@@ -27,7 +27,7 @@ RUN pip install --no-cache-dir -r requirements.txt && \
     find /opt/venv -name '*.pyc' -delete
 
 # Stage 3: Minimal Alpine runtime
-FROM python:3.14-alpine AS runtime
+FROM python:3.15-alpine AS runtime
 
 WORKDIR /app
 
